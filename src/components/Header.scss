@@ -1,0 +1,58 @@
+@import "../styles/variables";
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  width: 95%;  //수정?
+  background-color: #ffffff;
+
+  .logo {
+
+    display: flex;
+    align-items: center;
+    gap: 8px; // 이미지와 텍스트 사이 간격
+    text-decoration: none; // 밑줄 제거
+    color: inherit; // 기본 텍스트 색 유지
+
+    &__img {
+      height: 60px; // 원하는 크기로 조절
+      width: auto;
+      position: relative;
+      top: 6px; // 대칭을 맞추기 위해 이미지를 아래로 이동
+    }
+
+    &__text {
+      font-size: 50px; // 원하는 크기로 조절
+      font-weight: bold;
+      color: $color-red;
+
+    }
+  }
+
+  .nav {
+    display: flex;
+
+    a {
+      margin-left: 6rem; // 간격
+      font-weight: 600;
+      font-size: 1.5rem;
+      text-decoration: none; // 밑줄 제거
+      color: $color-dark;
+      transition: color 0.2s ease;
+
+      &:nth-child(1) { color: $color-blue; }      // Upload
+      &:nth-child(2) { color: $color-yellow; }    // Product
+      &:nth-child(3) { color: $color-green; }     // Community
+      &:nth-child(4) { color: $color-red; }       // History
+      &:nth-child(5) { color: $color-skyblue;
+                        margin-right: 2rem;
+                     }   // Login
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}

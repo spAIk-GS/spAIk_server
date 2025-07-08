@@ -1,0 +1,61 @@
+@import "../styles/variables";
+
+.footer {
+  background-color: $color-gray;
+  padding: 2rem 0rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-family: $font-main;
+  font-size: 0.95rem;
+
+  .left {
+    flex: 1;
+    min-width: 250px;
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: $color-red;
+    }
+
+    p {
+      color: #222; //??
+      line-height: 1.4;
+      max-width: 300px;
+    }
+  }
+
+  .right {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 3rem;
+
+    .section {
+      strong {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .icons {
+        display: flex;
+        gap: 0.8rem;
+        font-size: 1.4rem;
+        align-items: center;
+      }
+    }
+  }
+
+  .copyright {
+    width: 100%;
+    margin-top: 1.5rem;
+    text-align: right;
+    font-size: 0.85rem;
+    color: #555; //??
+  }
+}
