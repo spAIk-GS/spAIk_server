@@ -36,6 +36,8 @@ html, body {
         max-width: 100%;
         height: auto;
         border-radius: 16px;
+        -webkit-mask-image: radial-gradient(circle, black 80%, transparent 100%);
+        mask-image: radial-gradient(circle, black 50%, transparent 100%);
       }
     }
 

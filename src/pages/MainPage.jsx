@@ -1,5 +1,5 @@
 import "./MainPage.scss";
-import mainImage from "../assets/temp_mainPageImage.png";
+import mainImage from "../assets/mainPageImage.png";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
