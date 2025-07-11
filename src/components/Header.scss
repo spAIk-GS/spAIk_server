@@ -1,11 +1,11 @@
-@import "../styles/variables";
+@import "../styles/main";
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 3rem;
-  width: 95%;  //수정?
+  width: 95%;
   background-color: #ffffff;
 
   .logo {

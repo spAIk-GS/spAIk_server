@@ -1,7 +1,18 @@
-@import "../styles/variables";
+@import "../styles/main";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;  // 수평 스크롤 없애기
+  width: 100%;
+}
 
 .main-page {
-  font-family: 'Quicksand', sans-serif;
+  font-family: $font-main;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,6 +36,8 @@
         max-width: 100%;
         height: auto;
         border-radius: 16px;
+        -webkit-mask-image: radial-gradient(circle, black 80%, transparent 100%);
+        mask-image: radial-gradient(circle, black 50%, transparent 100%);
       }
     }
 
@@ -32,9 +45,10 @@
       flex: 1;
       min-width: 280px;
       padding: 1rem 2rem;
+      text-align: center;
 
       .main-page__quote {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: bold;
         line-height: 1.5;
         margin-bottom: 1.5rem;
@@ -50,6 +64,7 @@
         font-size: 1.1rem;
         font-weight: bold;
         cursor: pointer;
+        
 
         &:hover {
           background-color: darken($color-red, 8%);
