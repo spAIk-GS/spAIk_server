@@ -1,3 +1,70 @@
+@import "../styles/variables";
+
+/* ✅ Quicksand 폰트 적용 추가 */
+.login-page-wrapper {
+  font-family: 'Quicksand', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* ✅ 스크롤 방지 */
+}
+
+.logo__text {
+  font-size: 40px; /* 필요하면 줄이기 */
+  transform: translateY(0); /* ✅ 더 위로 */
+}
+
+.logo__img {
+  height: 50px; /* ✅ 이미지 크기 조절 */
+  transform: translateY(0); /* ✅ 더 위로 */
+}
+.login-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* ✅ 헤더 포함 전체 높이 고정 */
+}
+
+.header {
+   padding: 0;          /* ✅ 패딩 없애기 */
+  margin: 0;           /* ✅ 마진 없애기 */
+  height: auto;        /* ✅ 원하는 높이 지정 */
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.login-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0; /* ✅ 여백 제거 */
+  min-height: 0; /* ✅ flex 안에서 height 충돌 방지 */
+}
+
+.login-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* ✅ 추가 */
+  justify-content: center; /* ✅ 수직 가운데 정렬 */
+  align-items: center; /* ✅ 수평 가운데 정렬 */
+  min-height: calc(100vh - 80px); /* ✅ 헤더 높이 고려 */
+}
+
+.login-page .nav {  /* ✅ 로그인 페이지일 때 메뉴 숨기기 */
+  display: none;
+}
+
+.login-page {
+  margin-top: 0; /* ✅ 헤더와 겹치지 않도록 여백 설정 */
+}
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -12,7 +79,7 @@
   background-color: #fff;
   padding: 40px 30px;
   border-radius: 10px;
-  box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
   width: 350px;
   display: flex;
   flex-direction: column;
@@ -26,7 +93,15 @@
   margin-bottom: 10px;
 }
 
-label {
+
+.login-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.login-label-row label {
   font-size: 14px;
   font-weight: 500;
 }
@@ -39,18 +114,40 @@ input {
 }
 
 .password-wrapper {
-  position: relative;
+  display: flex;
+ flex-direction: column;
+  gap: 6px;
 }
 
+.password-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.password-label-row label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+
+
 .forgot-link {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
+  font-size: 12px;
   color: #d23a3a;
   text-decoration: none;
+  
 }
+
 
 .login-btn {
   background-color: #004b93;
@@ -71,15 +168,21 @@ input {
 .google-btn {
   background-color: #d62d4b;
   color: white;
-  padding: 10px 0;
+  padding: 10px 20px;
   border: none;
   border-radius: 20px;
   font-size: 16px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 7px;
   cursor: pointer;
+   flex-direction: row-reverse;
+}
+
+
+.google-btn span {
+  display: inline-block;
 }
 
 .google-btn img {
@@ -110,3 +213,4 @@ input {
   font-weight: bold;
   text-decoration: underline;
 }
+
