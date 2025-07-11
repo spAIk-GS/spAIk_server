@@ -1,28 +1,39 @@
 import React from 'react';
-import './loginPage.scss';
+import './LoginPage.scss';
+import googleLogo from '../assets/google-logo.png';
+import Header from "../components/Header";
 
 function LoginPage() {
-  return (
-    <div className="login-container">
+ return (
+
+  <div className="login-page-wrapper login-page"> {/* ✅ 'login-page' 클래스 추가 */}
+
+  <div className="login-page-wrapper">
+      <Header />
+    <div className="login-content">
       <div className="login-card">
         <h2>Login For your Account</h2>
 
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" placeholder="Enter your email" />
+        <input type="email" id="email" placeholder="Enter your email" /> 
 
+
+        <div className="password-label-row">
         <label htmlFor="password">Password</label>
-        <div className="password-wrapper">
-          <input type="password" id="password" placeholder="Enter your password" />
-          <a href="#" className="forgot-link">Forgot?</a>
+        <a href="#" className="forgot-link">Forgot?</a>
         </div>
+        <div className="password-wrapper">
+        <input type="password" id="password" placeholder="Enter your password" />
+        </div>
+
 
         <button className="login-btn">Login</button>
 
         <div className="or-divider">or</div>
 
         <button className="google-btn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" />
-          Sign In with Google
+          <span>Sign In with Google</span>
+          <img src={googleLogo} alt="Google logo" />  
         </button>
 
         <p className="signup-text">
@@ -34,6 +45,8 @@ function LoginPage() {
         By using spAlk, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
       </p>
     </div>
+     </div>
+     </div>
   );
 }
 
