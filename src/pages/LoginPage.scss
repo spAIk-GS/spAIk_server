@@ -1,19 +1,21 @@
 @import "../styles/variables";
+//@import "../styles/main";
 
 /* ✅ Quicksand 폰트 적용 추가 */
 .login-page-wrapper {
   font-family: 'Quicksand', sans-serif;
+  //font-family: $font-main;
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* ✅ 스크롤 방지 */
-}
+// html, body {
+//   height: 100%;
+//   margin: 0;
+//   padding: 0;
+//   overflow: hidden; /* ✅ 스크롤 방지 */
+// }
 
 .logo__text {
   font-size: 40px; /* 필요하면 줄이기 */
@@ -30,14 +32,14 @@ html, body {
   height: 100vh; /* ✅ 헤더 포함 전체 높이 고정 */
 }
 
-.header {
-   padding: 0;          /* ✅ 패딩 없애기 */
-  margin: 0;           /* ✅ 마진 없애기 */
-  height: auto;        /* ✅ 원하는 높이 지정 */
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
+// .header {
+//    padding: 0;          /* ✅ 패딩 없애기 */
+//   margin: 0;           /* ✅ 마진 없애기 */
+//   height: auto;        /* ✅ 원하는 높이 지정 */
+//   display: flex;
+//   align-items: flex-start;
+//   justify-content: flex-start;
+// }
 
 .login-content {
   flex: 1;
@@ -54,7 +56,7 @@ html, body {
   flex-direction: column; /* ✅ 추가 */
   justify-content: center; /* ✅ 수직 가운데 정렬 */
   align-items: center; /* ✅ 수평 가운데 정렬 */
-  min-height: calc(100vh - 80px); /* ✅ 헤더 높이 고려 */
+  //min-height: calc(100vh - 80px); /* ✅ 헤더 높이 고려 */
 }
 
 .login-page .nav {  /* ✅ 로그인 페이지일 때 메뉴 숨기기 */
@@ -71,6 +73,7 @@ html, body {
   align-items: center;
   font-family: $font-main;
   background-color: #f4f4f4;
+  //
   height: 100vh;
   padding-top: 40px;
 }
@@ -144,6 +147,7 @@ input {
 .forgot-link {
   font-size: 12px;
   color: #d23a3a;
+  //
   text-decoration: none;
   
 }
@@ -151,6 +155,7 @@ input {
 
 .login-btn {
   background-color: #004b93;
+  //
   color: white;
   padding: 10px 0;
   border: none;
@@ -167,6 +172,7 @@ input {
 
 .google-btn {
   background-color: #d62d4b;
+  //
   color: white;
   padding: 10px 20px;
   border: none;
@@ -197,6 +203,7 @@ input {
 
 .signup-text a {
   color: #00a0d6;
+  //
   text-decoration: none;
   font-weight: bold;
 }
