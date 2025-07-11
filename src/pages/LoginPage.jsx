@@ -37,7 +37,7 @@ function LoginPage() {
         </button>
 
         <p className="signup-text">
-          No Account? <a href="#">Sign Up</a>
+          No Account? <a href="signup">Sign Up</a>
         </p>
       </div>
 
