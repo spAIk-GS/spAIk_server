@@ -1,13 +1,11 @@
-// src/App.jsx
 import React from "react";
-import MainPage from "./pages/MainPage";
-import LoginPage from "./pages/LoginPage";
+import AppRouter from "./routes/index";
 
 
 function App() {
   return (
     <div className="App">
-      <MainPagePage />
+      <AppRouter />
     </div>
   );
 }
