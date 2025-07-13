@@ -1,7 +1,11 @@
 import "./Header.scss";
+import { useContext } from "react";
+import AppContext from "../context/AppContext";
 import logoImage from '../assets/logo.png';
 
 const Header = () => {
+  const { isLoggedIn } = useContext(AppContext);
+
   return (
     <header className="header">
       <a href="/" className="logo">
@@ -9,11 +13,19 @@ const Header = () => {
         <span className="logo__text">spAIk</span>
       </a>
       <nav className="nav">
-        <a href="#">Upload</a>
+        {isLoggedIn ? (
+          <a href="/upload">Upload</a>
+        ) : (
+          <a href="/login">Upload</a>
+        )}
         <a href="#">Product</a>
         <a href="#">Community</a>
         <a href="#">History</a>
-        <a href="login">Login</a>
+        {isLoggedIn ? (
+          <a href="/profile">My</a>
+        ) : (
+          <a href="/login">Login</a>
+        )}
       </nav>
     </header>
   );
