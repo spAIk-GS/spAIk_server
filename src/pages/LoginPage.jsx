@@ -88,7 +88,8 @@ function LoginPage() {
 
           {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
 
-
+        //<button className="login-btn">Login</button>   e-branch2
+        
           <button type="submit" className="login-btn" onClick={handleLogin}>Login</button>
           <div className="or-divider">or</div>
           <button className="google-btn">
