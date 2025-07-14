@@ -1,78 +1,27 @@
-@import "../styles/variables";
-//@import "../styles/main";
+@import "../styles/main";
 
 .login-page .nav {  /* ✅ 로그인 페이지일 때 메뉴 숨기기 */
   display: none;
 }
 
-// .login-page {   
-//   margin-top: 0; /* ✅ 헤더와 겹치지 않도록 여백 설정 */
-// }
-
-/* ✅ Quicksand 폰트 적용 추가 */
 .login-page-wrapper {
-  font-family: 'Quicksand', sans-serif;
-  //font-family: $font-main;
+  font-family: $font-main;
   display: flex;
   flex-direction: column;
   height: 100vh;
   background-color: #F9F9F9; // 살짝 회색
 
   .header { 
-    
     background-color: inherit;
   }
 }
 
-// html, body {
-//   height: 100%;
-//   margin: 0;
-//   padding: 0;
-//   overflow: hidden; /* ✅ 스크롤 방지 */
-// }
-
-// .logo__text {
-//   font-size: 40px; /* 필요하면 줄이기 */
-//   transform: translateY(0); /* ✅ 더 위로 */
-// }
-
-// .logo__img {
-//   height: 50px; /* ✅ 이미지 크기 조절 */
-//   transform: translateY(0); /* ✅ 더 위로 */
-// }
-
-// .login-page-wrapper {
-//   display: flex;
-//   flex-direction: column;
-//   height: 100vh; /* ✅ 헤더 포함 전체 높이 고정 */
-// }
-
-// .header {
-//    padding: 0;          /* ✅ 패딩 없애기 */
-//   margin: 0;           /* ✅ 마진 없애기 */
-//   height: auto;        /* ✅ 원하는 높이 지정 */
-//   display: flex;
-//   align-items: flex-start;
-//   justify-content: flex-start;
-// }
-
-.login-content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 0; /* ✅ 여백 제거 */
-  min-height: 0; /* ✅ flex 안에서 height 충돌 방지 */
-}
-
-//위에랑 같은데?
 .login-content {
   flex: 1;
   display: flex;
   flex-direction: column; /* ✅ 추가 */
   justify-content: center; /* ✅ 수직 가운데 정렬 */
   align-items: center; /* ✅ 수평 가운데 정렬 */
-  //min-height: calc(100vh - 80px); /* ✅ 헤더 높이 고려 */
 }
 
 .login-container {
@@ -81,7 +30,6 @@
   align-items: center;
   font-family: $font-main;
   background-color: #f4f4f4;
-  //
   height: 100vh;
   padding-top: 40px;
 }
@@ -150,20 +98,15 @@ input {
   box-sizing: border-box;
 }
 
-
-
 .forgot-link {
   font-size: 12px;
-  color: #d23a3a;
-  //
+  color: $color-red;
   text-decoration: none;
   
 }
 
-
 .login-btn {
-  background-color: #004b93;
-  //
+  background-color: $color-blue;
   color: white;
   padding: 10px 0;
   border: none;
@@ -179,8 +122,7 @@ input {
 }
 
 .google-btn {
-  background-color: #d62d4b;
-  //
+  background-color: $color-red;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -193,7 +135,6 @@ input {
   cursor: pointer;
    flex-direction: row-reverse;
 }
-
 
 .google-btn span {
   display: inline-block;
@@ -210,8 +151,7 @@ input {
 }
 
 .signup-text a {
-  color: #00a0d6;
-  //
+  color: $color-skyblue;
   text-decoration: none;
   font-weight: bold;
 }
@@ -228,4 +168,3 @@ input {
   font-weight: bold;
   text-decoration: underline;
 }
-

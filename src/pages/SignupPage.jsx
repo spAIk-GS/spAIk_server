@@ -1,12 +1,20 @@
 import React from "react";
 import "./SignupPage.scss";
-import googleLogo from "../assets/google-logo.png"; // LoginPage에서 사용한 로고와 동일
+import logoImage from '../assets/logo.png';
 import Header from "../components/Header";
 
 function SignupPage() {
   return (
     <div className="signup-page-wrapper">
-      <Header />
+      <header className="header"
+      style={{ backgroundColor: "#F9F9F9" }}
+      >
+        <a href="/" className="logo">
+          <img src={logoImage} alt="logo" className="logo__img" />
+          <span className="logo__text">spAIk</span>
+        </a>
+      </header>
+      
        <div className="signup-content">
         <div className="signup-card">
           <h2>Let’s create your profile!</h2>
