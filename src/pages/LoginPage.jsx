@@ -31,7 +31,7 @@ function LoginPage() {
     //나중에 스프링부트 연결 시 아래 코드 주석 해제
     /*
     try {
-      const response = await fetch('http://localhost:8080/users/login', {
+      const response = await fetch('http://localhost:8080/auth/login  ', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email, password }),
@@ -88,7 +88,7 @@ function LoginPage() {
 
           {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
 
-        //<button className="login-btn">Login</button>   e-branch2
+        {/* <button className="login-btn">Login</button>   e-branch2 */}
         
           <button type="submit" className="login-btn" onClick={handleLogin}>Login</button>
           <div className="or-divider">or</div>
