@@ -19,7 +19,6 @@ const Header = () => {
           <a href="/login">Upload</a>
         )}
         <a href="#">Product</a>
-        <a href="#">Community</a>
         <a href="#">History</a>
         {isLoggedIn ? (
           <a href="/profile">My</a>

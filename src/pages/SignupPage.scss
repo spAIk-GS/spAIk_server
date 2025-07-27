@@ -1,7 +1,7 @@
-@import "../styles/variables";
+@import "../styles/main";
 
 .signup-page-wrapper {
-  font-family: 'Quicksand', sans-serif;
+  font-family: $font-main;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -49,7 +49,7 @@
 }
 
 .signup-btn {
-  background-color: #c62828;
+  background-color: $color-red;
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -61,8 +61,22 @@
 }
 
 .signup-btn:hover {
-  background-color: #a51f1f;
+  background-color: darken($color_red, 8%);
 }
 
+.error-msg {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.success-msg {
+  color: #2ecc71;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
 
 

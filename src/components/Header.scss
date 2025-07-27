@@ -35,7 +35,7 @@
     display: flex;
 
     a {
-      margin-left: 6rem; // 간격
+      margin-left: 10rem; // 간격
       font-weight: 600;
       font-size: 1.5rem;
       text-decoration: none; // 밑줄 제거
@@ -44,11 +44,10 @@
 
       &:nth-child(1) { color: $color-blue; }      // Upload
       &:nth-child(2) { color: $color-yellow; }    // Product
-      &:nth-child(3) { color: $color-green; }     // Community
-      &:nth-child(4) { color: $color-red; }       // History
-      &:nth-child(5) { color: $color-skyblue;
+      &:nth-child(3) { color: $color-green; }     // History
+      &:nth-child(4) { color: $color-skyblue;     // Login
                         margin-right: 2rem;
-                     }   // Login
+                     }
 
       &:hover {
         opacity: 0.8;

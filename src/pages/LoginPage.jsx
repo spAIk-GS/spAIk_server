@@ -18,7 +18,14 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    //지금은 더미 로그인 처리
+    if (!email.trim() || !password.trim()) {
+      setErrorMsg('이메일과 비밀번호를 모두 입력해주세요.');
+      return;
+    }
+
+
+    //더미 로그인 처리
+    //스프링부트 연동 후에 제거
     if (email === 'test@example.com' && password === '123456') {
       setIsLoggedIn(true);
       sessionStorage.setItem("isLoggedIn", "true"); // 저장
@@ -29,9 +36,8 @@ function LoginPage() {
     }
 
     //나중에 스프링부트 연결 시 아래 코드 주석 해제
-    /*
     try {
-      const response = await fetch('http://localhost:8080/auth/login  ', {
+      const response = await fetch('http://localhost:8080/auth/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email, password }),
@@ -39,18 +45,31 @@ function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setIsLoggedIn(true); //로그인 성공 처리
-        localStorage.setItem('token', data.token); // 토큰 저장 (선택)
+        setIsLoggedIn(true); // 로그인 성공 처리
+
+        // Bearer 형식 저장
+        localStorage.setItem('token', `Bearer ${data.token}`);
+        
+        // 유저 정보 저장 (선택)
+        if (data.user?.email) {
+          localStorage.setItem('userEmail', data.user.email);
+        }
+
         navigate('/');
       } else {
-        const err = await response.json();
-        setErrorMsg(err.error || '로그인에 실패했습니다.');
+        let errMsg = '로그인에 실패했습니다.';
+        try {
+          const err = await response.json();
+          errMsg = err.error || err.message || errMsg;
+        } catch (e) {
+          console.warn('에러 응답 파싱 실패', e);
+        }
+        setErrorMsg(errMsg);
       }
     } catch (error) {
       console.error('Error: ', error);
       setErrorMsg('서버 오류가 발생했습니다.');
     }
-    */
 
   };
 
@@ -86,7 +105,7 @@ function LoginPage() {
             />
           </div>
 
-          {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
+          {errorMsg && <p className="error-msg">{errorMsg}</p>}
 
         {/* <button className="login-btn">Login</button>   e-branch2 */}
         
