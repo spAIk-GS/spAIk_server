@@ -4,6 +4,11 @@ import Login from "../pages/LoginPage";
 import Signup from "../pages/SignupPage";
 import Profile from "../pages/ProfilePage";
 import Upload from "../pages/UploadPage";
+import TermsPage from "../pages/TermsPage";
+import PolicyPage from "../pages/PolicyPage";
+
+
+
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -13,6 +18,9 @@ const AppRouter = () => (
       <Route path="/signup" element={<Signup />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/upload" element={<Upload />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/policy" element={<PolicyPage />} />  
+
     </Routes>
   </BrowserRouter>
 );
