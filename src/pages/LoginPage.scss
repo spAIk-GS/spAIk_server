@@ -70,6 +70,7 @@ input {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
+  background-color: #ebebeb;
 }
 
 .password-wrapper {
@@ -113,6 +114,10 @@ input {
   border-radius: 20px;
   font-size: 16px;
   cursor: pointer;
+
+  &:hover {
+    background-color: darken($color_blue, 8%);
+  }
 }
 
 .or-divider {
@@ -134,6 +139,10 @@ input {
   gap: 7px;
   cursor: pointer;
    flex-direction: row-reverse;
+
+   &:hover {
+    background-color: darken($color_red, 8%);
+  }
 }
 
 .google-btn span {
@@ -147,7 +156,7 @@ input {
 
 .signup-text {
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .signup-text a {
@@ -169,6 +178,7 @@ input {
   text-decoration: underline;
 }
 
+
 //아래부분 Term 디자인
 .terms-text {
   text-align: center;
@@ -184,4 +194,12 @@ input {
       text-decoration: underline;
     }
   }
+
+.error-msg {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+
 }
