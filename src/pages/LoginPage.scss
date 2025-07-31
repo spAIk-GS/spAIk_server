@@ -168,3 +168,20 @@ input {
   font-weight: bold;
   text-decoration: underline;
 }
+
+//아래부분 Term 디자인
+.terms-text {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 15px;
+  color: #444;
+
+  .terms-link {
+    color: #d92a2a;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
 import googleLogo from '../assets/google_logo.png';
 import Header from "../components/Header";
-
+import { Link } from "react-router-dom";  //Term 연결 코드
 
 function LoginPage() {
 
@@ -103,8 +103,12 @@ function LoginPage() {
         </div>
 
         <p className="terms-text">
-          By using spAlk, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
-        </p>
+           By using spAIk, you agree to our{" "}
+          <Link to="/terms" className="terms-link">Terms</Link> and{" "}
+         <Link to="/policy" className="terms-link">Privacy Policy</Link>
+         </p>
+       {/*위에꺼 Term 연결-policy할 때 참고*/}
+       
       </div>
     </div>
   </div>
