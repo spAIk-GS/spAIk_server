@@ -23,7 +23,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
 
-        String role = "ROLE_USER"; // 또는 사용자 권한을 OAuth2User에서 꺼낼 수 있으면 거기서 가져와도 돼
+        String role = "ROLE_USER"; 
         String token = jwtTokenProvider.createToken(email, role);
   
         response.setContentType("application/json");

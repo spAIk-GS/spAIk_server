@@ -22,16 +22,11 @@ public class AuthService {
 
     //회원가입 처리
     public void signup(SignupRequestDto dto) {
-        // 비밀번호 확인
-        if (!dto.getPassword().equals(dto.getPasswordCheck())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
-        }
-
         // 이메일 중복 확인
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("이미 존재하는 이메일입니다.");
         }
-
+        
         // 비밀번호 암호화 및 회원 생성
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 

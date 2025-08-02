@@ -1,16 +1,10 @@
-//DB테이블과 매핑되는 사용자 정보 클래스
 package com.spaik.backend.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,21 +12,29 @@ import lombok.AllArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
-
-    private String name;
 
     private String email;
 
     private String password;
 
-    private Role role;
+    private String name;
 
-    private AuthProvider provider;
+    @Enumerated(EnumType.STRING)
+    private Role role;  // ex: USER, ADMIN
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;  // ex: LOCAL, GOOGLE
+
+    @Column(name = "provider_id")
+    private String providerId;  // Google의 sub 값
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 }
-

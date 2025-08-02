@@ -1,62 +1,49 @@
 //OAuth2User정보 로드
 package com.spaik.backend.auth.oauth;
 
-import com.spaik.backend.user.entity.User;
+import com.spaik.backend.user.entity.AuthProvider;
 import com.spaik.backend.user.entity.Role;
+import com.spaik.backend.user.entity.User;
 import com.spaik.backend.user.repository.UserRepository;
-import com.spaik.backend.auth.jwt.JwtTokenProvider;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.client.userinfo.*;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;  // 이 부분 추가
+    private final UserRepository userRepository;
 
-    //provider(구글)에서 사용자 정보 가져옴
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
+        String provider = userRequest.getClientRegistration().getRegistrationId(); // "google"
+        String providerId = (String) attributes.get("sub"); // 구글 고유 ID
+        String email = (String) attributes.get("email");
+        String name = (String) attributes.get("name");
 
-        // DB에 없으면 자동 회원가입
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            return userRepository.save(User.builder()
-                .email(email)
+        User user = userRepository.findByEmail(email)
+                .orElseGet(() -> createUser(name, email, providerId));
+
+        return oAuth2User;
+    }
+
+    private User createUser(String name, String email, String providerId) {
+        User user = User.builder()
                 .name(name)
-                .password("") // 소셜 로그인은 비밀번호 없음
+                .email(email)
+                .password(null) // 소셜 로그인은 비밀번호 없음
                 .role(Role.USER)
-                .build());
-        });
+                .provider(AuthProvider.GOOGLE)
+                .providerId(providerId)
+                .build();
 
-
-        // JWT 토큰 발급
-        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole().toString());
-
-        // 반환할 OAuth2User 객체에 토큰 포함
-        Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
-        attributes.put("token", token);
-
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                attributes,
-                "email"
-        );
+        return userRepository.save(user);
     }
 }

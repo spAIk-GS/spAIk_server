@@ -53,8 +53,9 @@ public class SecurityConfig {
                     // 아래 경로는 인증 없이 허용
                     "/auth/register",
                     "/auth/login",
-                    "/login/oauth2/code/**" , 
-                    "/error" 
+                    "/login/oauth2/code/**",
+                    "/error",
+                    "/videos/presign"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
@@ -75,7 +76,8 @@ public class SecurityConfig {
                         path.startsWith("/webjars") ||
                         path.equals("/auth/register") ||
                         path.equals("/auth/login") ||
-                        path.startsWith("/auth/oauth2");
+                        path.startsWith("/auth/oauth2") ||
+                        path.equals("/videos/presign"); 
                 }
             }, UsernamePasswordAuthenticationFilter.class);
 
