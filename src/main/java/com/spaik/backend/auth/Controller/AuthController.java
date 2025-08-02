@@ -19,7 +19,6 @@ import com.spaik.backend.auth.service.OAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,7 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> signup(@RequestBody @Valid SignupRequestDto request) {
         authService.signup(request);
-        return ResponseEntity.ok(Map.of("message", "회원가입 성공"));
+        return ResponseEntity.ok().build();
     }
 
     // 자체 로그인
