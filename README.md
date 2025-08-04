@@ -33,6 +33,10 @@ npm install react-router-dom
 
 npm install framer-motion
 
+npm install @react-oauth/google
+
+npm install jwt-decode
+
 🚀 개발 서버 실행
 
 npm run dev

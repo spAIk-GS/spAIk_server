@@ -1,11 +1,19 @@
 @import "../styles/main";
 
+.signup-page .nav {
+  display: none;
+}
+
 .signup-page-wrapper {
   font-family: $font-main;
   display: flex;
   flex-direction: column;
   height: 100vh;
   background-color: #F9F9F9;
+
+  .header {
+    background-color: inherit;
+  }
 }
 
 .signup-content {
@@ -16,15 +24,15 @@
 }
 
 .signup-card {
-  background: #fff;
+  background: white;
   margin-top: -65px;
-  padding: 30px 20px;   /* 기존 40px 30px → 30px 20px */
-  border-radius: 8px;    /* 선택: 조금 더 작게 */
+  padding: 30px 20px;
+  border-radius: 8px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
-  width: 350px;          /* 기존 400px → 320px */
+  width: 350px;
   display: flex;
   flex-direction: column;
-  gap: 10px;             /* 기존 15px → 10px */
+  gap: 10px;
 }
 
 .signup-card h2 {
@@ -72,7 +80,7 @@
 }
 
 .success-msg {
-  color: #2ecc71;
+  color: greenyellow;
   font-size: 0.95rem;
   font-weight: bold;
   margin-top: 1rem;

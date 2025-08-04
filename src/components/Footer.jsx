@@ -29,7 +29,7 @@ const Footer = () => {
             <a href="https://www.notion.so/spAIk-225b71be02228087b862e7b533505be9" target="_blank" rel="noopener noreferrer">
               <img src={notionImage} alt="Notion" className="icon-image" />
             </a>
-            <a href="https://github.com/es1206/spAIk_client" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/spAIk-GS" target="_blank" rel="noopener noreferrer">
               <img src={githubImage} alt="Github" className="icon-image" />
             </a>
           </div>

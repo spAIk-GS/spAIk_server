@@ -1,31 +1,43 @@
-@import "../styles/variables"; // 필요시 폰트, 색상 변수 정의된 파일
-
 .policy-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  font-family: 'Quicksand', sans-serif;
-  color: #333;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 
-  h1 {
-    font-size: 32px;
-    margin-bottom: 30px;
-    font-weight: bold;
-  }
+  .policy-page-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
 
-  section {
-    margin-bottom: 30px;
+    .policy-content {
+      max-width: 800px;
+      width: 100%;
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-    h2 {
-      font-size: 20px;
-      color: #1d1d1f;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        margin-bottom: 5rem;
+      }
 
-    p {
-      font-size: 15px;
-      line-height: 1.6;
+      section {
+        margin-bottom: 2rem;
+
+        h2 {
+          font-size: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+
+        p {
+          font-size: 1rem;
+          line-height: 1.6;
+        }
+      }
     }
   }
 }

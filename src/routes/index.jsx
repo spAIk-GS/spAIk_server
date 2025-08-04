@@ -6,6 +6,7 @@ import Profile from "../pages/ProfilePage";
 import Upload from "../pages/UploadPage";
 import TermsPage from "../pages/TermsPage";
 import PolicyPage from "../pages/PolicyPage";
+import ForgotPage from "../pages/ForgotPage";
 
 
 
@@ -20,6 +21,7 @@ const AppRouter = () => (
       <Route path="/upload" element={<Upload />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/policy" element={<PolicyPage />} />  
+      <Route path="/forgot" element={<ForgotPage />} />
 
     </Routes>
   </BrowserRouter>

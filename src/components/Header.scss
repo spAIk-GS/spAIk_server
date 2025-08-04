@@ -6,28 +6,27 @@
   align-items: center;
   padding: 1.5rem 3rem;
   width: 95%;
-  background-color: #ffffff;
+  background-color: white;
 
   .logo {
 
     display: flex;
     align-items: center;
-    gap: 8px; // 이미지와 텍스트 사이 간격
-    text-decoration: none; // 밑줄 제거
-    color: inherit; // 기본 텍스트 색 유지
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
 
     &__img {
-      height: 60px; // 원하는 크기로 조절
+      height: 60px;
       width: auto;
       position: relative;
-      top: 6px; // 대칭을 맞추기 위해 이미지를 아래로 이동
+      top: 6px;
     }
 
     &__text {
-      font-size: 50px; // 원하는 크기로 조절
+      font-size: 50px;
       font-weight: bold;
       color: $color-red;
-
     }
   }
 
@@ -35,10 +34,10 @@
     display: flex;
 
     a {
-      margin-left: 10rem; // 간격
+      margin-left: 10rem;
       font-weight: 600;
       font-size: 1.5rem;
-      text-decoration: none; // 밑줄 제거
+      text-decoration: none;
       color: $color-dark;
       transition: color 0.2s ease;
 
