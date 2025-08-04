@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import "./SignupPage.scss";
-import logoImage from "../assets/logo.png";
+import { useState } from "react";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
+import "./SignupPage.scss";
+
 
 function SignupPage() {
   const [name, setName] = useState("");
@@ -60,6 +60,8 @@ function SignupPage() {
 
       if (response.ok) {
         const data = await response.json();
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("accessToken", data.token); // ??
         setSuccessMsg(data.message || "회원가입이 완료되었습니다.");
         setErrors({ name: "", email: "", password: "", confirmPassword: "", general: "" });
         // 로그인 페이지로 이동 (1초 후 ? )
@@ -91,65 +93,61 @@ function SignupPage() {
   };
 
   return (
-    <div className="signup-page-wrapper">
-      <header className="header" style={{ backgroundColor: "#F9F9F9" }}>
-        <a href="/" className="logo">
-          <img src={logoImage} alt="logo" className="logo__img" />
-          <span className="logo__text">spAIk</span>
-        </a>
-      </header>
+    <div className="signup-page">
+      <div className="signup-page-wrapper">
+        <Header />
+        <div className="signup-content">
+          <div className="signup-card">
+            <h2>Let’s create your profile!</h2>
 
-      <div className="signup-content">
-        <div className="signup-card">
-          <h2>Let’s create your profile!</h2>
+            <label htmlFor="name">Name (English)</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your name"
+              value={name}
+              onChange={handleNameChange}
+            />
+            {errors.name && <p className="error-msg">{errors.name}</p>}
 
-          <label htmlFor="name">Name (English)</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your name"
-            value={name}
-            onChange={handleNameChange}
-          />
-          {errors.name && <p className="error-msg">{errors.name}</p>}
+            <label htmlFor="email">Email address</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {errors.email && <p className="error-msg">{errors.email}</p>}
 
-          <label htmlFor="email">Email address</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {errors.email && <p className="error-msg">{errors.email}</p>}
+            <label htmlFor="password">Password (8+ characters)</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {errors.password && <p className="error-msg">{errors.password}</p>}
 
-          <label htmlFor="password">Password (8+ characters)</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {errors.password && <p className="error-msg">{errors.password}</p>}
+            <label htmlFor="confirm-password">Re-type password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              placeholder="Re-type your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            {errors.confirmPassword && <p className="error-msg">{errors.confirmPassword}</p>}
 
-          <label htmlFor="confirm-password">Re-type password</label>
-          <input
-            type="password"
-            id="confirm-password"
-            placeholder="Re-type your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          {errors.confirmPassword && <p className="error-msg">{errors.confirmPassword}</p>}
+            {/* 이 부분은 나중에 제거 */}
+            {errors.general && <p className="error-msg">{errors.general}</p>}
+            {successMsg && <p className="success-msg">{successMsg}</p>}
 
-          {/* 이 부분은 나중에 제거 */}
-          {errors.general && <p className="error-msg">{errors.general}</p>}
-          {successMsg && <p className="success-msg">{successMsg}</p>}
-
-          <button className="signup-btn" onClick={handleSignup}>
-            Sign Up
-          </button>
+            <button className="signup-btn" onClick={handleSignup}>
+              Sign Up
+            </button>
+          </div>
         </div>
       </div>
     </div>

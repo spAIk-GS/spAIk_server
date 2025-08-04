@@ -1,0 +1,79 @@
+@import "../styles/main";
+
+.forgot-page .nav {
+  display: none;
+}
+
+.forgot-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #F9F9F9;
+
+  .header { 
+    background-color: inherit;
+  }
+
+  .forgot-container {
+    margin: auto;
+    background-color: white;
+    display: flex;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 450px;
+    margin-top: 6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      label {
+        font-weight: 500;
+      }
+
+      input {
+        padding: 0.7rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 0.8rem;
+        background-color: $color-blue;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: darken($color_blue, 8%);
+        }
+      }
+    }
+
+    .success-message {
+      color: green;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  }
+}

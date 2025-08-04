@@ -4,7 +4,9 @@ import AppContext from "../context/AppContext";
 import logoImage from '../assets/logo.png';
 
 const Header = () => {
-  const { isLoggedIn } = useContext(AppContext);
+  const { isLoggedIn, isLoading } = useContext(AppContext);
+
+  if (isLoading) return null;
 
   return (
     <header className="header">
@@ -19,7 +21,11 @@ const Header = () => {
           <a href="/login">Upload</a>
         )}
         <a href="#">Product</a>
-        <a href="#">History</a>
+        {isLoggedIn ? (
+          <a href="/#">History</a>
+        ) : (
+          <a href="/login">History</a>
+        )}
         {isLoggedIn ? (
           <a href="/profile">My</a>
         ) : (

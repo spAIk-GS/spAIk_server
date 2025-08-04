@@ -7,7 +7,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;  // 수평 스크롤 없애기
+  overflow-x: hidden;
   width: 100%;
 }
 
@@ -65,7 +65,6 @@ html, body {
         font-weight: bold;
         cursor: pointer;
         
-        // 마우스를 버튼 위에 올렸을때 어떤식인지
         &:hover {
           background-color: darken($color_red, 8%);
         }

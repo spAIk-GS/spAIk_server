@@ -1,6 +1,6 @@
 @import "../styles/main";
 
-.login-page .nav {  /* ✅ 로그인 페이지일 때 메뉴 숨기기 */
+.login-page .nav {
   display: none;
 }
 
@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #F9F9F9; // 살짝 회색
+  background-color: #F9F9F9;
 
   .header { 
     background-color: inherit;
@@ -19,9 +19,9 @@
 .login-content {
   flex: 1;
   display: flex;
-  flex-direction: column; /* ✅ 추가 */
-  justify-content: center; /* ✅ 수직 가운데 정렬 */
-  align-items: center; /* ✅ 수평 가운데 정렬 */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-container {
@@ -35,7 +35,7 @@
 }
 
 .login-card {
-  background-color: #fff;
+  background-color: white;
   padding: 40px 30px;
   border-radius: 10px;
   box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
@@ -173,27 +173,10 @@ input {
 }
 
 .terms-text a {
-  color: #333;
+  color: $color-red;
   font-weight: bold;
   text-decoration: underline;
 }
-
-
-//아래부분 Term 디자인
-.terms-text {
-  text-align: center;
-  font-size: 12px;
-  margin-top: 15px;
-  color: #444;
-
-  .terms-link {
-    color: #d92a2a;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
 
 .error-msg {
   color: red;
@@ -201,5 +184,4 @@ input {
   margin-top: 0.3rem;
   margin-bottom: 1rem;
   font-weight: bold;
-
 }
