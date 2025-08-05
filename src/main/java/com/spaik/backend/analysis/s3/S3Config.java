@@ -1,5 +1,5 @@
 //S3Client, S3Presinger Bean 설정
-package com.spaik.backend.presentation.s3;
+package com.spaik.backend.analysis.s3;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;

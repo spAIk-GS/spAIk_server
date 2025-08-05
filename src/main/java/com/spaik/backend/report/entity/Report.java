@@ -1,10 +1,12 @@
-// 최종 피드백 종합 결과를 저장하는 엔티티
+// 분석 보고서를 나타내는 엔티티
 
-package com.spaik.backend.presentation.domain;
+package com.spaik.backend.report.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+
+import com.spaik.backend.analysis.domain.Presentation;
 
 @Entity
 @Getter
@@ -12,19 +14,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FinalFeedback {
+public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "final_feedback_id")
+    @Column(name = "report_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id", nullable = false)
-    private Report report;
-
-    @Column(name = "final_feedback", columnDefinition = "TEXT")
-    private String finalFeedback;
+    @JoinColumn(name = "presentation_id", nullable = false)
+    private Presentation presentation;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

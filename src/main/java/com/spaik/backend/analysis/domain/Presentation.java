@@ -1,6 +1,6 @@
 // 업로드된 발표 영상을 나타내는 도메인 엔티티
 
-package com.spaik.backend.presentation.domain;
+package com.spaik.backend.analysis.domain;
 import com.spaik.backend.user.entity.User;
 
 import jakarta.persistence.*;

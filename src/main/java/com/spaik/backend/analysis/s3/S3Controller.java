@@ -1,13 +1,13 @@
 // API 요청 수신, Presigned URL 반환
-package com.spaik.backend.presentation.s3;
+package com.spaik.backend.analysis.s3;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 
-import com.spaik.backend.presentation.s3.PresignRequestDto;
-import com.spaik.backend.presentation.s3.PresignResponseDto;
+import com.spaik.backend.analysis.s3.PresignRequestDto;
+import com.spaik.backend.analysis.s3.PresignResponseDto;
 
 import lombok.RequiredArgsConstructor;
 

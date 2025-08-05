@@ -1,5 +1,5 @@
 // Presigned URL 생성 서비스
-package com.spaik.backend.presentation.s3;
+package com.spaik.backend.analysis.s3;
 
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;

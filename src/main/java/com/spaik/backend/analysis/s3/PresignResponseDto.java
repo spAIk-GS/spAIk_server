@@ -1,4 +1,4 @@
-package com.spaik.backend.presentation.s3;
+package com.spaik.backend.analysis.s3;
 
 public class PresignResponseDto {
     private String url;
