@@ -133,8 +133,8 @@ const UploadPage = () => {
   const getPresignedUrl = async (fileName, type) => {
     const endpoint =
       type === "video"
-        ? "/videos/presign"
-        : "/thumbnails/presign";
+        ? "http://localhost:8080/videos/presign"
+        : "http://localhost:8080/thumbnails/presign";
     const token = localStorage.getItem("accessToken");
 
     const response = await fetch(endpoint, {
