@@ -51,7 +51,7 @@
           setIsLoggedIn(true); // 로그인 성공 처리
 
           // Bearer 형식 저장
-          localStorage.setItem('token', `Bearer ${data.token}`);
+          localStorage.setItem("accessToken", data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
 
           navigate('/');
