@@ -2,6 +2,7 @@ import "./UploadPage.scss";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
 
 const UploadPage = () => {
@@ -156,13 +157,17 @@ const UploadPage = () => {
     const response = await fetch(url, {
       method: "PUT",
       headers: {
-        "Content-Type": file.type,
+        "Content-Type": "video/mp4",
       },
       body: file,
     });
 
-    if (!response.ok) throw new Error("S3 업로드 실패");
-  };
+    if (!response.ok) {
+      const errorText = await response.text();
+    console.error("S3 응답 본문:", errorText); // 원인 메시지 확인 가능
+    throw new Error("S3 업로드 실패");
+    }
+  }
 
   const requestAnalysis = async (videoFileName) => {
     const token = localStorage.getItem("accessToken");

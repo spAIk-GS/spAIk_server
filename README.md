@@ -37,6 +37,8 @@ npm install @react-oauth/google
 
 npm install jwt-decode
 
+npm install axios
+
 🚀 개발 서버 실행
 
 npm run dev
