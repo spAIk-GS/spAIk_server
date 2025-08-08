@@ -22,6 +22,10 @@ public class VideoFeedback {
     @Column(name = "video_feedback_id")
     private Long id;
 
+    @Column(name = "analysis_id", unique = true)
+    private String analysisId;
+
+
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private AnalysisStatus status;
