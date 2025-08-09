@@ -7,9 +7,11 @@ import com.spaik.backend.report.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VoiceFeedbackRepository extends JpaRepository<VoiceFeedback, Long> {
+    Optional<VoiceFeedback> findByAnalysisId(String analysisId);
     List<VoiceFeedback> findByReport(Report report);
 }
 

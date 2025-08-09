@@ -8,8 +8,10 @@ import com.spaik.backend.report.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VideoFeedbackRepository extends JpaRepository<VideoFeedback, Long> {
+    Optional<VideoFeedback> findByAnalysisId(String analysisId);
     List<VideoFeedback> findByReport(Report report);
 }
