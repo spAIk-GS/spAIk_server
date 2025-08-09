@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/analysis")
 public class AnalysisController {
 
     private final AnalysisService analysisService;
@@ -20,7 +21,7 @@ public class AnalysisController {
         return analysisService.requestVideoAnalysis(dto);
     }
 
-    @PostMapping("/voice")
+    @PostMapping("/audio")
     public AnalysisResponseDto requestVoiceAnalysis(@RequestBody AnalysisRequestDto dto) {
         return analysisService.requestVoiceAnalysis(dto);
     }
