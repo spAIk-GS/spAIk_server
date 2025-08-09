@@ -1,7 +1,10 @@
 // Presigned URL 생성 서비스
 package com.spaik.backend.analysis.s3;
 
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -24,6 +27,7 @@ public class S3Service {
     }
 
     public String generatePresignedUrl(String keyName) {
+        System.out.println(">>> [DEBUG] Called generatePresignedUrl for PUT: " + keyName);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(keyName)
@@ -36,6 +40,24 @@ public class S3Service {
                 .build();
 
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+
+        return presignedRequest.url().toString();
+    }
+
+    public String generatePresignedGetUrl(String keyName) {
+        System.out.println(">>> [DEBUG] Called generatePresignedUrl for GET: " + keyName);
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(keyName)
+                .build();
+
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .getObjectRequest(getObjectRequest)
+                .signatureDuration(Duration.ofMinutes(10))
+                .build();
+
+        PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
 
         return presignedRequest.url().toString();
     }

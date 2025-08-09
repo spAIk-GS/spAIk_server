@@ -1,5 +1,9 @@
 package com.spaik.backend.analysis.s3;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
 public class PresignResponseDto {
     private String url;
 

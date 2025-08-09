@@ -29,8 +29,8 @@ public class S3Config {
         return S3Presigner.builder()
                 .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .build();
-    }
+                .build();    }
+
 
     @Bean
     public S3Client s3Client() {
