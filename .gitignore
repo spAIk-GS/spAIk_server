@@ -60,3 +60,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#
+spAIk_client/
+spAIk_audio_ai/
+spAIk_video/
+venv/
+
