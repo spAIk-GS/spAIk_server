@@ -56,6 +56,7 @@ public class SecurityConfig {
                     "/login/oauth2/code/**",
                     "/error",
                     "/videos/presign",
+                    "/videos/presign-get",
                     "/videos/thumbnails"
                 ).permitAll()
                 .anyRequest().authenticated()

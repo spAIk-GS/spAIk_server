@@ -23,6 +23,12 @@ public class S3Controller {
         return ResponseEntity.ok(new PresignResponseDto(url));
         
     }
+
+    @PostMapping("/videos/presign-get")
+    public ResponseEntity<PresignResponseDto> getPresignedGetUrl(@RequestBody PresignRequestDto requestDto) {
+        String url = s3Service.generatePresignedGetUrl(requestDto.getFileName());
+        return ResponseEntity.ok(new PresignResponseDto(url));
+    }
 }
 
 

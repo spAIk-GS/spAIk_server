@@ -23,7 +23,7 @@ public class AnalysisController {
         return analysisService.requestVideoAnalysis(dto);
     }
 
-    @PostMapping("/voice")
+    @PostMapping("/audio")
     public AnalysisResponseDto requestVoiceAnalysis(@RequestBody AnalysisRequestDto dto) {
         return analysisService.requestVoiceAnalysis(dto);
     }
