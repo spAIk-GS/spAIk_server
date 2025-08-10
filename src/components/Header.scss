@@ -1,0 +1,56 @@
+@import "../styles/main";
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  width: 95%;
+  background-color: white;
+
+  .logo {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+
+    &__img {
+      height: 60px;
+      width: auto;
+      position: relative;
+      top: 6px;
+    }
+
+    &__text {
+      font-size: 50px;
+      font-weight: bold;
+      color: $color-red;
+    }
+  }
+
+  .nav {
+    display: flex;
+
+    a {
+      margin-left: 10rem;
+      font-weight: 600;
+      font-size: 1.5rem;
+      text-decoration: none;
+      color: $color-dark;
+      transition: color 0.2s ease;
+
+      &:nth-child(1) { color: $color-blue; }      // Upload
+      &:nth-child(2) { color: $color-yellow; }    // Product
+      &:nth-child(3) { color: $color-green; }     // History
+      &:nth-child(4) { color: $color-skyblue;     // Login
+                        margin-right: 2rem;
+                     }
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+@import "../styles/main";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.main-page {
+  font-family: $font-main;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+
+  &__main {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 3rem;
+    flex-wrap: wrap;
+    gap: 3rem;
+    
+
+    .main-page__illustration {
+      flex: 1;
+      min-width: 280px;
+
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 16px;
+        -webkit-mask-image: radial-gradient(circle, black 80%, transparent 100%);
+        mask-image: radial-gradient(circle, black 50%, transparent 100%);
+      }
+    }
+
+    .main-page__text-block {
+      flex: 1;
+      min-width: 280px;
+      padding: 1rem 2rem;
+      text-align: center;
+
+      .main-page__quote {
+        font-size: 2rem;
+        font-weight: bold;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        color: #222;
+      }
+
+      .main-page__cta {
+        background-color: $color-red;
+        color: white;
+        padding: 0.8rem 1.8rem;
+        border: none;
+        border-radius: 2rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        
+        &:hover {
+          background-color: darken($color_red, 8%);
+        }
+      }
+    }
+  }
+}

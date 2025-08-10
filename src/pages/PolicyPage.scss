@@ -1,0 +1,43 @@
+.policy-page {
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .policy-page-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+
+    .policy-content {
+      max-width: 800px;
+      width: 100%;
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        margin-bottom: 5rem;
+      }
+
+      section {
+        margin-bottom: 2rem;
+
+        h2 {
+          font-size: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+
+        p {
+          font-size: 1rem;
+          line-height: 1.6;
+        }
+      }
+    }
+  }
+}
