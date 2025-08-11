@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +27,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String role = "ROLE_USER"; 
         String token = jwtTokenProvider.createToken(email, role);
-  
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"token\":\"" + token + "\"}");
+
+        String redirectUri = "http://localhost:5173/oauth/callback?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        response.sendRedirect(redirectUri);
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        response.getWriter().write("{\"token\":\"" + token + "\"}");
     }
 
 }
