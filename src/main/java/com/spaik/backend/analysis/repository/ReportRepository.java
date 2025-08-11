@@ -2,10 +2,11 @@
 
 package com.spaik.backend.analysis.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.spaik.backend.report.entity.Report;
+import com.spaik.backend.analysis.domain.Report;
 
 import java.util.Optional;
 
@@ -13,5 +14,4 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     Optional<Report> findByPresentation_PresentationId(Long presentationId);
 }
-
 

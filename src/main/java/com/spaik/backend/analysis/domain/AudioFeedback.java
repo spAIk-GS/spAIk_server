@@ -3,7 +3,7 @@
 package com.spaik.backend.analysis.domain;
 
 import com.spaik.backend.analysis.domain.AnalysisStatus;
-import com.spaik.backend.report.entity.Report;
+import com.spaik.backend.analysis.domain.Report;
 
 import java.time.LocalDateTime;
 
@@ -16,11 +16,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VoiceFeedback {
+public class AudioFeedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long voiceFeedbackId;
+    private Long audioFeedbackId;
 
     @Column(name = "analysis_id", unique = true)
     private String analysisId;
@@ -62,4 +62,10 @@ public class VoiceFeedback {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 }

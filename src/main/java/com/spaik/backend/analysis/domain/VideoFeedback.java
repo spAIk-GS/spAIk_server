@@ -2,7 +2,7 @@
 
 package com.spaik.backend.analysis.domain;
 import com.spaik.backend.analysis.domain.AnalysisStatus;
-import com.spaik.backend.report.entity.Report;
+import com.spaik.backend.analysis.domain.Report;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +24,6 @@ public class VideoFeedback {
 
     @Column(name = "analysis_id", unique = true)
     private String analysisId;
-
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,4 +54,10 @@ public class VideoFeedback {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 }

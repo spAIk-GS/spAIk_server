@@ -9,7 +9,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VoiceAnalysisResultDto {
+public class AudioAnalysisResultDto {
 
     private String analysisId;
     private Status status; // enum 타입으로 변경

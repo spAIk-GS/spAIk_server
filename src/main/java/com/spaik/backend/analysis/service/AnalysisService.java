@@ -2,11 +2,11 @@ package com.spaik.backend.analysis.service;
 
 import com.spaik.backend.analysis.domain.AnalysisStatus;
 import com.spaik.backend.analysis.domain.VideoFeedback;
-import com.spaik.backend.analysis.domain.VoiceFeedback;
+import com.spaik.backend.analysis.domain.AudioFeedback;
 import com.spaik.backend.analysis.dto.AnalysisRequestDto;
 import com.spaik.backend.analysis.dto.AnalysisResponseDto;
 import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
-import com.spaik.backend.analysis.repository.VoiceFeedbackRepository;
+import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class AnalysisService {
 
     private final VideoFeedbackRepository videoFeedbackRepository;
-    private final VoiceFeedbackRepository voiceFeedbackRepository;
+    private final AudioFeedbackRepository voiceFeedbackRepository;
     private final RestTemplate restTemplate;
 
     private static final String VIDEO_ANALYSIS_URL = "http://ai-server/analysis/video";
@@ -50,7 +50,7 @@ public class AnalysisService {
     public AnalysisResponseDto requestVoiceAnalysis(AnalysisRequestDto dto) {
         String analysisId = "voice-" + UUID.randomUUID();
 
-        VoiceFeedback voiceFeedback = VoiceFeedback.builder()
+        AudioFeedback voiceFeedback = AudioFeedback.builder()
                 .status(AnalysisStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .build();

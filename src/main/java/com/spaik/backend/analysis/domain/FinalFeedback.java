@@ -1,11 +1,8 @@
-// 최종 피드백 종합 결과를 저장하는 엔티티
+package com.spaik.backend.analysis.domain;
 
-package com.spaik.backend.report.entity;
-
-import com.spaik.backend.report.entity.Report;
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,13 +17,18 @@ public class FinalFeedback {
     @Column(name = "final_feedback_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_id")
     private Report report;
 
     @Column(name = "final_feedback", columnDefinition = "TEXT")
     private String finalFeedback;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

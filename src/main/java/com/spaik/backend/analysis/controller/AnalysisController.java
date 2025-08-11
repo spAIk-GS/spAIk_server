@@ -4,8 +4,8 @@ import com.spaik.backend.analysis.dto.AnalysisRequestDto;
 import com.spaik.backend.analysis.dto.AnalysisResponseDto;
 import com.spaik.backend.analysis.service.AnalysisService;
 import com.spaik.backend.analysis.dto.VideoAnalysisResultDto;
-import com.spaik.backend.analysis.dto.VoiceAnalysisResultDto;
-import com.spaik.backend.report.entity.Report;
+import com.spaik.backend.analysis.dto.AudioAnalysisResultDto;
+import com.spaik.backend.analysis.domain.Report;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +28,5 @@ public class AnalysisController {
         return analysisService.requestVoiceAnalysis(dto);
     }
 
-    //최종 리포트 조회 API
 }
 

@@ -6,8 +6,6 @@ import com.spaik.backend.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-
 
 @Entity
 @Getter
@@ -28,15 +26,14 @@ public class Presentation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(name = "s3_video_url", nullable = false)
-    private String s3VideoUrl;
+    @Column(name = "s3_keyname", nullable = false)
+    private String s3keyName;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "expired_at")
-    private LocalDateTime expiredAt;
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
