@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class FinalFeedbackRequestDto {
-    private Long presentationId;  // 평가할 발표 ID
+    private String presentationId;  // 평가할 발표 ID
 }
 

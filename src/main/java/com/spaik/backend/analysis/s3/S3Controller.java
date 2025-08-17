@@ -17,6 +17,7 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
+    // 영상 업로드용 Presigned URL 생성
    @PostMapping("/videos/presign")
     public ResponseEntity<PresignResponseDto> getPresignedUrl(@RequestBody PresignRequestDto requestDto) {
         String url = s3Service.generatePresignedUrl(requestDto.getFileName());
@@ -24,9 +25,24 @@ public class S3Controller {
         
     }
 
+    // 영상 다운로드용 Presigned URL 생성
     @PostMapping("/videos/presign-get")
     public ResponseEntity<PresignResponseDto> getPresignedGetUrl(@RequestBody PresignRequestDto requestDto) {
         String url = s3Service.generatePresignedGetUrl(requestDto.getFileName());
+        return ResponseEntity.ok(new PresignResponseDto(url));
+    }
+
+    // 썸네일 업로드용 Presigned URL 생성
+    @PostMapping("/thumbnails/presign")
+    public ResponseEntity<PresignResponseDto> getThumbnailPresignedUrl(@RequestBody PresignRequestDto requestDto) {
+        String url = s3Service.generateThumbnailPresignedUrl(requestDto.getFileName());
+        return ResponseEntity.ok(new PresignResponseDto(url));
+    }
+
+    // 썸네일 다운로드용 Presigned URL 생성
+    @PostMapping("/thumbnails/presign-get")
+    public ResponseEntity<PresignResponseDto> getThumbnailPresignedGetUrl(@RequestBody PresignRequestDto requestDto) {
+        String url = s3Service.generateThumbnailPresignedGetUrl(requestDto.getFileName());
         return ResponseEntity.ok(new PresignResponseDto(url));
     }
 }
