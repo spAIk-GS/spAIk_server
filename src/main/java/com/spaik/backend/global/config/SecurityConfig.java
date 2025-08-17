@@ -66,7 +66,8 @@ public class SecurityConfig {
                     "/videos/presign",
                     "/videos/presign-get",
                     "/thumbnails/presign",
-                    "/thumbnails/presign-get"
+                    "/thumbnails/presign-get",
+                    "/user/history"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
