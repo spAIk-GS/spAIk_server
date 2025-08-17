@@ -19,7 +19,7 @@ public class Report {
     @Column(name = "report_id")
     private Long id;
 
-
+    // Presentation과 다대일 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presentation_id", nullable = false)
     private Presentation presentation;
