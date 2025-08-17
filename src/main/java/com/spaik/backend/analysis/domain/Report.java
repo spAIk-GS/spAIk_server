@@ -23,9 +23,11 @@ public class Report {
     private Presentation presentation;
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<AudioFeedback> audioFeedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
 
     @OneToOne(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -1,19 +1,19 @@
 package com.spaik.backend.analysis.service;
 
-import com.spaik.backend.analysis.domain.AnalysisStatus;
-import com.spaik.backend.analysis.domain.VideoFeedback;
-import com.spaik.backend.analysis.domain.AudioFeedback;
-import com.spaik.backend.analysis.domain.Report;
-import com.spaik.backend.analysis.dto.VideoAnalysisResultDto;
-import com.spaik.backend.analysis.dto.AudioAnalysisResultDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spaik.backend.analysis.domain.*;
+import com.spaik.backend.analysis.dto.AnalysisCallbackDto;
 import com.spaik.backend.analysis.dto.FinalFeedbackRequestDto;
-import com.spaik.backend.analysis.dto.FullReportResponseDto;
-import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
+import com.spaik.backend.analysis.dto.ReportResponseDto;
 import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
 import com.spaik.backend.analysis.repository.ReportRepository;
+import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -24,115 +24,91 @@ public class CallbackService {
     private final AudioFeedbackRepository audioFeedbackRepository;
     private final ReportRepository reportRepository;
     private final FinalFeedbackService finalFeedbackService;
+    private final SSEService sseService;
+    private final ObjectMapper objectMapper;
 
-    // AI 비디오 분석 결과 저장
     @Transactional
-    public Optional<FullReportResponseDto> saveVideoResult(VideoAnalysisResultDto dto) {
-        VideoFeedback videoFeedback = videoFeedbackRepository.findByAnalysisId(dto.getAnalysisId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid analysisId: " + dto.getAnalysisId()));
+    public Optional<ReportResponseDto> saveAnalysisResult(AnalysisCallbackDto dto) {
 
-        videoFeedback.setStatus(
-                dto.getStatus() == VideoAnalysisResultDto.Status.COMPLETED
-                        ? AnalysisStatus.COMPLETED
-                        : AnalysisStatus.PENDING
-        );
+        // 1️⃣ Report 조회
+        Report report = reportRepository.findByPresentationPresentationId(dto.getPresentationId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Report not found for presentationId: " + dto.getPresentationId()));
 
-        if (dto.getResults() != null) {
-            videoFeedback.setBodyMovement(dto.getResults().getBody_movement().getValue());
-            videoFeedback.setBodyMovementValue(parseValue(dto.getResults().getBody_movement().getValue()));
-            videoFeedback.setBodyMovementFeedback(dto.getResults().getBody_movement().getFeedback());
+        // 2️⃣ Video 저장
+        if (dto.getVideo() != null) {
+            VideoFeedback videoFeedback = videoFeedbackRepository.findByReport(report)
+                    .orElse(VideoFeedback.builder()
+                            .report(report)
+                            .status(AnalysisStatus.PENDING)
+                            .createdAt(LocalDateTime.now())
+                            .build());
 
-            videoFeedback.setGazeOut(dto.getResults().getGaze_out().getValue());
-            videoFeedback.setGazeOutValue(parseValue(dto.getResults().getGaze_out().getValue()));
-            videoFeedback.setGazeOutFeedback(dto.getResults().getGaze_out().getFeedback());
+            videoFeedback.setAnalysisIdVideo(dto.getVideo().getAnalysisId());
+            videoFeedback.setStatus(AnalysisStatus.COMPLETED);
+
+            if (dto.getVideo().getResults() != null) {
+                try {
+                    videoFeedback.setMovementSegmentsJson(
+                            objectMapper.writeValueAsString(dto.getVideo().getResults().get("movement")));
+                    videoFeedback.setGazeSegmentsJson(
+                            objectMapper.writeValueAsString(dto.getVideo().getResults().get("gaze")));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Failed to serialize video segments", e);
+                }
+            }
+            videoFeedbackRepository.save(videoFeedback);
         }
 
-        videoFeedbackRepository.save(videoFeedback);
+        // 3️⃣ Audio 저장
+        if (dto.getAudio() != null) {
+            AudioFeedback audioFeedback = audioFeedbackRepository.findByReport(report)
+                    .orElse(AudioFeedback.builder()
+                            .report(report)
+                            .status(AnalysisStatus.PENDING)
+                            .createdAt(LocalDateTime.now())
+                            .build());
 
-        if (videoFeedback.getStatus() == AnalysisStatus.COMPLETED) {
-            return Optional.ofNullable(videoFeedback.getReport())
-                .map(report -> checkAndGenerateFinalFeedback(report.getId()));
-        }
-        return Optional.empty();
-    }
+            audioFeedback.setAnalysisIdAudio(dto.getAudio().getAnalysisId());
+            audioFeedback.setStatus(AnalysisStatus.COMPLETED);
 
-    // AI 음성 분석 결과 저장
-    @Transactional
-    public Optional<FullReportResponseDto> saveAudioResult(AudioAnalysisResultDto dto) {
-        AudioFeedback audioFeedback = audioFeedbackRepository.findByAnalysisId(dto.getAnalysisId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid analysisId: " + dto.getAnalysisId()));
-
-        audioFeedback.setStatus(
-                dto.getStatus() == AudioAnalysisResultDto.Status.COMPLETED
-                        ? AnalysisStatus.COMPLETED
-                        : AnalysisStatus.PENDING
-        );
-
-        if (dto.getResults() != null) {
-            if (dto.getResults().containsKey("speed")) {
-                audioFeedback.setSpeedValue(parseValue(dto.getResults().get("speed").getValue()));
-                audioFeedback.setSpeedFeedback(dto.getResults().get("speed").getFeedback());
+            if (dto.getAudio().getResults() != null) {
+                try {
+                    audioFeedback.setSpeedSegmentsJson(
+                            objectMapper.writeValueAsString(dto.getAudio().getResults().get("speed")));
+                    audioFeedback.setPitchSegmentsJson(
+                            objectMapper.writeValueAsString(dto.getAudio().getResults().get("pitch")));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Failed to serialize audio segments", e);
+                }
             }
-            if (dto.getResults().containsKey("pitch")) {
-                audioFeedback.setPitchValue(parseValue(dto.getResults().get("pitch").getValue()));
-                audioFeedback.setPitchFeedback(dto.getResults().get("pitch").getFeedback());
-            }
-            if (dto.getResults().containsKey("volume")) {
-                audioFeedback.setVolumeDecibels(parseValue(dto.getResults().get("volume").getValue()));
-                audioFeedback.setVolumeFeedback(dto.getResults().get("volume").getFeedback());
-            }
-            if (dto.getResults().containsKey("stutter")) {
-                audioFeedback.setStutterCount(parseInt(dto.getResults().get("stutter").getValue()));
-                audioFeedback.setStutterFeedback(dto.getResults().get("stutter").getFeedback());
-            }
-            if (dto.getResults().containsKey("content_summary")) {
-                audioFeedback.setContentSummary(dto.getResults().get("content_summary").getFeedback());
-            }
+            audioFeedbackRepository.save(audioFeedback);
         }
 
-        audioFeedbackRepository.save(audioFeedback);
-
-        if (audioFeedback.getStatus() == AnalysisStatus.COMPLETED) {
-            return Optional.ofNullable(audioFeedback.getReport())
-                .map(report -> checkAndGenerateFinalFeedback(report.getId()));
-        }
-        return Optional.empty();
-    }
-
-    // 두 분석이 모두 완료되었는지 확인하고 최종 피드백 생성
-    private FullReportResponseDto checkAndGenerateFinalFeedback(Long reportId) {
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new IllegalArgumentException("Report not found for id: " + reportId));
-
-        boolean audioCompleted = audioFeedbackRepository.findByReport(report)
-                .map(feedback -> feedback.getStatus() == AnalysisStatus.COMPLETED)
-                .orElse(false);
-
+        // 4️⃣ 최종 피드백 생성
         boolean videoCompleted = videoFeedbackRepository.findByReport(report)
-                .map(feedback -> feedback.getStatus() == AnalysisStatus.COMPLETED)
-                .orElse(false);
+                .map(f -> f.getStatus() == AnalysisStatus.COMPLETED).orElse(false);
+        boolean audioCompleted = audioFeedbackRepository.findByReport(report)
+                .map(f -> f.getStatus() == AnalysisStatus.COMPLETED).orElse(false);
 
-        if (audioCompleted && videoCompleted && report.getFinalFeedback() == null) {
-            FinalFeedbackRequestDto requestDto = new FinalFeedbackRequestDto();
-            requestDto.setPresentationId(report.getPresentation().getPresentationId());
-            return finalFeedbackService.createFinalFeedback(requestDto);
-        }
-        return null;
-    }
+        ReportResponseDto finalReport = null;
+        if (videoCompleted && audioCompleted && report.getFinalFeedback() == null) {
+            // ✅ FinalFeedbackRequestDto 생성 후 전달
+            FinalFeedbackRequestDto requestDto = FinalFeedbackRequestDto.builder()
+                    .presentationId(report.getPresentation().getPresentationId())
+                    .build();
+            finalFeedbackService.createFinalFeedback(requestDto);
 
-    private Double parseValue(String value) {
-        try {
-            return value != null ? Double.parseDouble(value) : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
+            finalReport = ReportResponseDto.builder()
+                    .reportId(report.getId())
+                    .presentationId(report.getPresentation().getPresentationId())
+                    .createdAt(report.getCreatedAt())
+                    .build();
 
-    private Integer parseInt(String value) {
-        try {
-            return value != null ? Integer.parseInt(value) : null;
-        } catch (NumberFormatException e) {
-            return null;
+            // 5️⃣ SSE로 프론트에 실시간 전송
+            sseService.sendUpdate(report.getPresentation().getPresentationId(), finalReport);
         }
+
+        return Optional.ofNullable(finalReport);
     }
 }

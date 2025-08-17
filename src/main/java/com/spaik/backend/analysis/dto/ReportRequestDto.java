@@ -5,5 +5,5 @@ import lombok.Setter;
 
 @Getter @Setter
 public class ReportRequestDto {
-    private Long presentationId;
+    private String presentationId;
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface AudioFeedbackRepository extends JpaRepository<AudioFeedback, Long> {
-    Optional<AudioFeedback> findByAnalysisId(String analysisId);
+    Optional<AudioFeedback> findByAnalysisIdAudio(String analysisIdAudio);
     Optional<AudioFeedback> findByReport(Report report);
 }
 

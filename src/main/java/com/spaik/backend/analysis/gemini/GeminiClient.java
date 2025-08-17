@@ -1,9 +1,10 @@
 package com.spaik.backend.analysis.gemini;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value; 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,23 +13,35 @@ import java.util.Map;
 public class GeminiClient {
 
     private final RestClient geminiRestClient;
-    
-    // final 필드가 아니므로 @RequiredArgsConstructor 생성자에서 제외됩니다.
+
     @Value("${gemini.api.key}")
     private String geminiApiKey;
-    
 
-    public String requestFinalFeedback(Long presentationId, String audioAnalysis, String videoAnalysis) {
-        
-        // 프롬프트 텍스트를 구성
-        String prompt = String.format(
-            "당신은 사용자의 면접 답변이나 발표를 피드백해주는 전문가입니다. 장점을 먼저 간략히 알려주고 내용의 논리성, 명확성, 구성, 그리고 청중에게 좋은 인상을 줄 수 있는 방법에 대해 간략하고 건설적인 피드백을 제공해주세요. " +
-            "Audio analysis: %s. Video analysis: %s.",
-            audioAnalysis,
-            videoAnalysis
-        );
-        
-        // Gemini API의 요청 본문 형식에 맞춰 Map을 구성
+    /**
+     * Gemini API 호출 - 최종 피드백 생성
+     * @param audioJson Audio 분석 데이터(JSON 문자열)
+     * @param videoJson Video 분석 데이터(JSON 문자열)
+     * @return Gemini API 응답(JSON)
+     */
+    public String requestFinalFeedback(String audioJson, String videoJson) {
+        // 🔹 프롬프트를 Gemini 내부에서 고정 관리
+        String prompt = String.format("""
+            당신은 사용자의 발표/면접을 분석하여 전문적인 피드백을 제공하는 발표 코치입니다.
+            분석 데이터는 아래와 같습니다.
+
+            [Audio 분석 데이터]
+            %s
+
+            [Video 분석 데이터]
+            %s
+
+            위 데이터를 종합 분석하여 다음을 작성하세요:
+            1. 발표의 강점 (간결하고 구체적으로)
+            2. 개선이 필요한 부분
+            3. 실천 가능한 개선 팁 (행동/연습 방법 중심)
+            4. 참고할 만한 자료나 훈련 방법 추천
+            """, audioJson, videoJson);
+
         Map<String, Object> requestBody = Map.of(
             "contents", List.of(
                 Map.of(
@@ -39,15 +52,13 @@ public class GeminiClient {
             )
         );
 
-        // API 호출 및 응답 받기
         return geminiRestClient.post()
-            // URI에 API 키를 쿼리 파라미터로 추가
             .uri(uriBuilder -> uriBuilder
                 .path("/v1beta/models/gemini-1.5-pro-latest:generateContent")
                 .queryParam("key", geminiApiKey)
                 .build())
             .body(requestBody)
             .retrieve()
-            .body(String.class); 
+            .body(String.class);
     }
 }

@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface VideoFeedbackRepository extends JpaRepository<VideoFeedback, Long> {
-    Optional<VideoFeedback> findByAnalysisId(String analysisId);
+    Optional<VideoFeedback> findByAnalysisIdVideo(String analysisIdVideo);
     Optional<VideoFeedback> findByReport(Report report);
 }

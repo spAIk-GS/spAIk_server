@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 @Builder
 public class ReportResponseDto {
     private Long reportId;
-    private Long presentationId;
+    private String presentationId;
     private LocalDateTime createdAt;
 }
