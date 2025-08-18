@@ -1,17 +1,13 @@
 package com.spaik.backend.analysis.service;
 
-import com.spaik.backend.analysis.domain.AnalysisStatus;
-import com.spaik.backend.analysis.domain.VideoFeedback;
-import com.spaik.backend.analysis.domain.AudioFeedback;
-import com.spaik.backend.analysis.domain.Report;
+import com.spaik.backend.analysis.domain.*;
 import com.spaik.backend.analysis.dto.AnalysisRequestDto;
-import com.spaik.backend.analysis.dto.AnalysisStartRequestDto;
 import com.spaik.backend.analysis.dto.AnalysisStartResponseDto;
-import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
-import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
-import com.spaik.backend.analysis.repository.ReportRepository;
-
+import com.spaik.backend.analysis.repository.*;
+import com.spaik.backend.analysis.s3.S3Service;
+import com.spaik.backend.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -25,19 +21,33 @@ public class AnalysisService {
     private final VideoFeedbackRepository videoFeedbackRepository;
     private final AudioFeedbackRepository audioFeedbackRepository;
     private final ReportRepository reportRepository;
+    private final PresentationRepository presentationRepository;
     private final RestTemplate restTemplate;
+    private final S3Service s3Service;
 
-    // AI 서버 분석 요청 URL
-    private static final String AI_ANALYSIS_URL = "http://ai-server/analysis";
+    // application.properties에서 AI 서버 URL 주입
+    @Value("${ai.server.url}")
+    private String aiServerUrl;
 
     @Transactional
-    public AnalysisStartResponseDto startAnalysis(AnalysisStartRequestDto startDto) {
+    public AnalysisStartResponseDto startAnalysis(String fileName, User user) {
 
-        // 1️⃣ PresentationId로 Report 조회
-        Report report = reportRepository.findByPresentationPresentationId(startDto.getPresentationId())
-                .orElseThrow(() -> new IllegalArgumentException("Report not found"));
+        // 1️⃣ 최근 업로드 기준 Presentation 조회 (userId + fileName)
+        Presentation presentation = presentationRepository
+                .findFirstByUserAndFileNameOrderByCreatedAtDesc(user, fileName)
+                .orElseThrow(() -> new IllegalArgumentException("Presentation not found"));
 
-        // 2️⃣ VideoFeedback 초기 생성
+        // 2️⃣ Presentation에 연결된 Report 조회 (없으면 생성)
+        Report report = reportRepository.findByPresentationPresentationId(presentation.getPresentationId())
+                .orElseGet(() -> {
+                    Report newReport = Report.builder()
+                            .presentation(presentation)
+                            .createdAt(LocalDateTime.now())
+                            .build();
+                    return reportRepository.save(newReport);
+                });
+
+        // 3️⃣ VideoFeedback 초기 생성
         VideoFeedback videoFeedback = VideoFeedback.builder()
                 .report(report)
                 .status(AnalysisStatus.PENDING)
@@ -45,7 +55,7 @@ public class AnalysisService {
                 .build();
         videoFeedbackRepository.save(videoFeedback);
 
-        // 3️⃣ AudioFeedback 초기 생성
+        // 4️⃣ AudioFeedback 초기 생성
         AudioFeedback audioFeedback = AudioFeedback.builder()
                 .report(report)
                 .status(AnalysisStatus.PENDING)
@@ -53,23 +63,20 @@ public class AnalysisService {
                 .build();
         audioFeedbackRepository.save(audioFeedback);
 
-        // 4️⃣ AI 서버 요청을 위한 DTO 생성
+        // 5️⃣ S3 다운로드 URL 생성
+        String s3DownloadUrl = s3Service.generatePresignedGetUrl(presentation.getS3keyName());
+
+        // 6️⃣ AI 서버 요청 DTO 생성
         AnalysisRequestDto aiRequestDto = new AnalysisRequestDto();
-        aiRequestDto.setPresentationId(startDto.getPresentationId());
-        aiRequestDto.setS3Url(generateDownloadUrl(report)); // S3 다운로드 URL 생성 메서드 호출
+        aiRequestDto.setPresentationId(presentation.getPresentationId());
+        aiRequestDto.setS3Url(s3DownloadUrl);
 
-        // 5️⃣ AI 서버에 분석 요청
-        restTemplate.postForEntity(AI_ANALYSIS_URL, aiRequestDto, Void.class);
+        // 7️⃣ AI 서버 호출
+        restTemplate.postForEntity(aiServerUrl, aiRequestDto, Void.class);
 
-        // 6️⃣ 프론트에 응답 반환
+        // 8️⃣ 프론트 응답 반환
         return AnalysisStartResponseDto.builder()
                 .status("PENDING")
                 .build();
-    }
-
-    // 예시: Report 기반 S3 다운로드 URL 생성
-    private String generateDownloadUrl(Report report) {
-        // return s3Service.generatePresignedGetUrl(report.getS3KeyName());
-        return "https://example-bucket.s3.amazonaws.com/" + report.getPresentation().getPresentationId();
     }
 }

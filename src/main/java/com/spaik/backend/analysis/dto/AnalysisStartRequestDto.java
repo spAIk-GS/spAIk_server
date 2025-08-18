@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnalysisStartRequestDto {
-    private String presentationId;
+    private String fileName;
 }
