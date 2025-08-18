@@ -21,7 +21,8 @@ public class AnalysisController {
             @RequestBody AnalysisStartRequestDto dto,
             @AuthenticationPrincipal User user) {
 
-        AnalysisStartResponseDto response = analysisService.startAnalysis(dto.getFileName(), user);
+        // DTO 전체를 전달
+        AnalysisStartResponseDto response = analysisService.startAnalysis(dto, user);
         return ResponseEntity.ok(response);
     }
 }
