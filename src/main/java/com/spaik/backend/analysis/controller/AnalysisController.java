@@ -1,7 +1,7 @@
 package com.spaik.backend.analysis.controller;
 
-import com.spaik.backend.analysis.dto.AnalysisRequestDto;
-import com.spaik.backend.analysis.dto.AnalysisResponseDto;
+import com.spaik.backend.analysis.dto.AnalysisStartRequestDto;
+import com.spaik.backend.analysis.dto.AnalysisStartResponseDto;
 import com.spaik.backend.analysis.service.AnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,9 @@ public class AnalysisController {
 
     private final AnalysisService analysisService;
 
-    // 프론트에서 분석 시작 요청
     @PostMapping("/start")
-    public ResponseEntity<AnalysisResponseDto> startAnalysis(@RequestBody AnalysisRequestDto dto) {
-        AnalysisResponseDto response = analysisService.requestAnalysis(dto);
+    public ResponseEntity<AnalysisStartResponseDto> startAnalysis(@RequestBody AnalysisStartRequestDto dto) {
+        AnalysisStartResponseDto response = analysisService.startAnalysis(dto);
         return ResponseEntity.ok(response);
     }
 }

@@ -5,7 +5,8 @@ import com.spaik.backend.analysis.domain.VideoFeedback;
 import com.spaik.backend.analysis.domain.AudioFeedback;
 import com.spaik.backend.analysis.domain.Report;
 import com.spaik.backend.analysis.dto.AnalysisRequestDto;
-import com.spaik.backend.analysis.dto.AnalysisResponseDto;
+import com.spaik.backend.analysis.dto.AnalysisStartRequestDto;
+import com.spaik.backend.analysis.dto.AnalysisStartResponseDto;
 import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
 import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
 import com.spaik.backend.analysis.repository.ReportRepository;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,17 +27,17 @@ public class AnalysisService {
     private final ReportRepository reportRepository;
     private final RestTemplate restTemplate;
 
-    //ai 분석 요청 추후 ai서버 주소로 교체
+    // AI 서버 분석 요청 URL
     private static final String AI_ANALYSIS_URL = "http://ai-server/analysis";
 
     @Transactional
-    public AnalysisResponseDto requestAnalysis(AnalysisRequestDto dto) {
+    public AnalysisStartResponseDto startAnalysis(AnalysisStartRequestDto startDto) {
 
-        // PresentationId로 Report 조회
-        Report report = reportRepository.findByPresentationPresentationId(dto.getPresentationId())
+        // 1️⃣ PresentationId로 Report 조회
+        Report report = reportRepository.findByPresentationPresentationId(startDto.getPresentationId())
                 .orElseThrow(() -> new IllegalArgumentException("Report not found"));
 
-        // VideoFeedback 초기 생성
+        // 2️⃣ VideoFeedback 초기 생성
         VideoFeedback videoFeedback = VideoFeedback.builder()
                 .report(report)
                 .status(AnalysisStatus.PENDING)
@@ -45,7 +45,7 @@ public class AnalysisService {
                 .build();
         videoFeedbackRepository.save(videoFeedback);
 
-        // AudioFeedback 초기 생성
+        // 3️⃣ AudioFeedback 초기 생성
         AudioFeedback audioFeedback = AudioFeedback.builder()
                 .report(report)
                 .status(AnalysisStatus.PENDING)
@@ -53,13 +53,23 @@ public class AnalysisService {
                 .build();
         audioFeedbackRepository.save(audioFeedback);
 
-        // AI 서버에 요청
-        restTemplate.postForEntity(AI_ANALYSIS_URL, dto, Void.class);
+        // 4️⃣ AI 서버 요청을 위한 DTO 생성
+        AnalysisRequestDto aiRequestDto = new AnalysisRequestDto();
+        aiRequestDto.setPresentationId(startDto.getPresentationId());
+        aiRequestDto.setS3Url(generateDownloadUrl(report)); // S3 다운로드 URL 생성 메서드 호출
 
-        String analysisId = "full-" + UUID.randomUUID();
-        return AnalysisResponseDto.builder()
-                .analysisId(analysisId)
+        // 5️⃣ AI 서버에 분석 요청
+        restTemplate.postForEntity(AI_ANALYSIS_URL, aiRequestDto, Void.class);
+
+        // 6️⃣ 프론트에 응답 반환
+        return AnalysisStartResponseDto.builder()
                 .status("PENDING")
                 .build();
+    }
+
+    // 예시: Report 기반 S3 다운로드 URL 생성
+    private String generateDownloadUrl(Report report) {
+        // return s3Service.generatePresignedGetUrl(report.getS3KeyName());
+        return "https://example-bucket.s3.amazonaws.com/" + report.getPresentation().getPresentationId();
     }
 }
