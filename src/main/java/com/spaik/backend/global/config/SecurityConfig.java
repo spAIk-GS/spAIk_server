@@ -8,7 +8,6 @@ import com.spaik.backend.auth.jwt.CustomUserDetailsService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 
 import lombok.RequiredArgsConstructor;
@@ -23,13 +22,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-
-import java.util.List;
-
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -65,8 +57,7 @@ public class SecurityConfig {
                     "/error",
                     "/videos/presign",
                     "/videos/presign-get",
-                    "/thumbnails/presign",
-                    "/thumbnails/presign-get"
+                    "/videos/thumbnails"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
@@ -74,14 +65,6 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                 .successHandler(oAuth2SuccessHandler)
             )
-
-            //추가함
-            // For API calls, return 401 JSON rather than redirecting to login
-            .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, e) -> {
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                res.setContentType("application/json;charset=UTF-8");
-                res.getWriter().write("{\"error\":\"Unauthorized\"}");
-            }))
             
             // JWT 인증 필터(swagger, 회원가입/로그인 등 제외)
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService) {
@@ -96,8 +79,7 @@ public class SecurityConfig {
                         path.equals("/auth/register") ||
                         path.equals("/auth/login") ||
                         path.startsWith("/auth/oauth2") ||
-                        path.equals("/videos/presign") ||
-                        path.equals("/thumbnails/presign");
+                        path.equals("/videos/presign"); 
                 }
             }, UsernamePasswordAuthenticationFilter.class);
 
@@ -112,31 +94,5 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    //추가함
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        // Frontend dev origin
-        config.setAllowedOriginPatterns(List.of("http://localhost:5173"));
-
-        // Methods used by your app
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Headers used by your app (Authorization for Bearer, Content-Type for JSON)
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-
-        // If you rely on cookies/session, set true and DO NOT use '*'
-        // For Bearer token only, false is fine
-        config.setAllowCredentials(false);
-
-        // Cache preflight for 1 hour
-        config.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
     }
 }

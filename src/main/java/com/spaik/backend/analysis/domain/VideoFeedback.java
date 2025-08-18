@@ -1,12 +1,7 @@
-// 영상 피드백 분석 결과를 저장하는 엔티티
-
 package com.spaik.backend.analysis.domain;
-import com.spaik.backend.analysis.domain.AnalysisStatus;
-import com.spaik.backend.analysis.domain.Report;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,38 +14,34 @@ public class VideoFeedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "video_feedback_id")
-    private Long id;
+    private Long videoFeedbackId;
 
-    @Column(name = "analysis_id", unique = true)
-    private String analysisId;
+    @Column(name = "analysis_id_video", unique = true)
+    private String analysisIdVideo;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private AnalysisStatus status;
 
-    // reportId 대신 Report 엔티티를 직접 참조
+    @Column(name = "message", columnDefinition = "TEXT")
+    private String message; // 실패 시 저장
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id", nullable = false)
+    @JoinColumn(name = "report_id")
     private Report report;
 
-    @Column(name = "body_movement")
-    private String bodyMovement;
+    /** 분석 결과 */
+    @Column(name = "movement_emotion")
+    private String movementEmotion;
 
-    @Column(name = "gaze_out")
-    private String gazeOut;
+    @Column(name = "movement_segments", columnDefinition = "TEXT")
+    private String movementSegmentsJson;
 
-    @Column(name = "body_movement_value")
-    private Double bodyMovementValue;
+    @Column(name = "gaze_emotion")
+    private String gazeEmotion;
 
-    @Column(name = "body_movement_feedback", columnDefinition = "TEXT")
-    private String bodyMovementFeedback;
-
-    @Column(name = "gaze_out_value")
-    private Double gazeOutValue;
-
-    @Column(name = "gaze_out_feedback", columnDefinition = "TEXT")
-    private String gazeOutFeedback;
+    @Column(name = "gaze_segments", columnDefinition = "TEXT")
+    private String gazeSegmentsJson;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -59,5 +50,4 @@ public class VideoFeedback {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-
 }

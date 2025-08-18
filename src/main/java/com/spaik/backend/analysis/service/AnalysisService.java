@@ -3,10 +3,13 @@ package com.spaik.backend.analysis.service;
 import com.spaik.backend.analysis.domain.AnalysisStatus;
 import com.spaik.backend.analysis.domain.VideoFeedback;
 import com.spaik.backend.analysis.domain.AudioFeedback;
+import com.spaik.backend.analysis.domain.Report;
 import com.spaik.backend.analysis.dto.AnalysisRequestDto;
 import com.spaik.backend.analysis.dto.AnalysisResponseDto;
 import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
 import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
+import com.spaik.backend.analysis.repository.ReportRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,45 +23,40 @@ import java.util.UUID;
 public class AnalysisService {
 
     private final VideoFeedbackRepository videoFeedbackRepository;
-    private final AudioFeedbackRepository voiceFeedbackRepository;
+    private final AudioFeedbackRepository audioFeedbackRepository;
+    private final ReportRepository reportRepository;
     private final RestTemplate restTemplate;
 
-    private static final String VIDEO_ANALYSIS_URL = "http://ai-server/analysis/video";
-    private static final String VOICE_ANALYSIS_URL = "http://ai-server/analysis/voice";
+    //ai 분석 요청 추후 ai서버 주소로 교체
+    private static final String AI_ANALYSIS_URL = "http://ai-server/analysis";
 
     @Transactional
-    public AnalysisResponseDto requestVideoAnalysis(AnalysisRequestDto dto) {
-        String analysisId = "video-" + UUID.randomUUID();
+    public AnalysisResponseDto requestAnalysis(AnalysisRequestDto dto) {
 
+        // PresentationId로 Report 조회
+        Report report = reportRepository.findByPresentationPresentationId(dto.getPresentationId())
+                .orElseThrow(() -> new IllegalArgumentException("Report not found"));
+
+        // VideoFeedback 초기 생성
         VideoFeedback videoFeedback = VideoFeedback.builder()
+                .report(report)
                 .status(AnalysisStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .build();
-
         videoFeedbackRepository.save(videoFeedback);
 
-        // AI 서버에 분석 요청 (비동기 처리)
-        restTemplate.postForEntity(VIDEO_ANALYSIS_URL, dto, Void.class);
-
-        return AnalysisResponseDto.builder()
-                .analysisId(analysisId)
-                .status("PENDING")
-                .build();
-    }
-
-    @Transactional
-    public AnalysisResponseDto requestVoiceAnalysis(AnalysisRequestDto dto) {
-        String analysisId = "voice-" + UUID.randomUUID();
-
-        AudioFeedback voiceFeedback = AudioFeedback.builder()
+        // AudioFeedback 초기 생성
+        AudioFeedback audioFeedback = AudioFeedback.builder()
+                .report(report)
                 .status(AnalysisStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .build();
+        audioFeedbackRepository.save(audioFeedback);
 
-        voiceFeedbackRepository.save(voiceFeedback);
+        // AI 서버에 요청
+        restTemplate.postForEntity(AI_ANALYSIS_URL, dto, Void.class);
 
-        restTemplate.postForEntity(VOICE_ANALYSIS_URL, dto, Void.class);
-
+        String analysisId = "full-" + UUID.randomUUID();
         return AnalysisResponseDto.builder()
                 .analysisId(analysisId)
                 .status("PENDING")

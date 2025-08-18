@@ -16,16 +16,20 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // report_id
+    @Column(name = "report_id")
+    private Long id;
 
+    // Presentation과 다대일 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presentation_id", nullable = false)
     private Presentation presentation;
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<AudioFeedback> audioFeedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
 
     @OneToOne(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -1,14 +1,8 @@
-// 음성 피드백 분석 결과를 저장하는 엔티티
-
 package com.spaik.backend.analysis.domain;
-
-import com.spaik.backend.analysis.domain.AnalysisStatus;
-import com.spaik.backend.analysis.domain.Report;
-
-import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,43 +16,44 @@ public class AudioFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long audioFeedbackId;
 
-    @Column(name = "analysis_id", unique = true)
-    private String analysisId;
+    @Column(name = "analysis_id_audio", unique = true)
+    private String analysisIdAudio;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private AnalysisStatus status;
 
+    @Column(name = "message", columnDefinition = "TEXT")
+    private String message; // 실패 시 저장
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_id")
     private Report report;
 
-    @Column(name = "speed_value")
-    private Double speedValue;
+    /** 분석 결과 */
+    @Column(name = "speed_emotion")
+    private String speedEmotion; // "좋음", "보통", "부족"
 
-    @Column(name = "speed_feedback", columnDefinition = "TEXT")
-    private String speedFeedback;
+    @Column(name = "speed_segments", columnDefinition = "TEXT")
+    private String speedSegmentsJson; // segments JSON 저장
 
-    @Column(name = "pitch_value")
-    private Double pitchValue;
+    @Column(name = "pitch_emotion")
+    private String pitchEmotion;
 
-    @Column(name = "pitch_feedback", columnDefinition = "TEXT")
-    private String pitchFeedback;
+    @Column(name = "pitch_segments", columnDefinition = "TEXT")
+    private String pitchSegmentsJson;
 
-    @Column(name = "volume_decibels")
-    private Double volumeDecibels;
+    @Column(name = "volume_emotion")
+    private String volumeEmotion;
 
-    @Column(name = "volume_feedback", columnDefinition = "TEXT")
-    private String volumeFeedback;
+    @Column(name = "volume_segments", columnDefinition = "TEXT")
+    private String volumeSegmentsJson;
 
-    @Column(name = "stutter_count")
-    private Integer stutterCount;
+    @Column(name = "stutter_emotion")
+    private String stutterEmotion;
 
-    @Column(name = "stutter_feedback", columnDefinition = "TEXT")
-    private String stutterFeedback;
-
-    @Column(name = "content_summary", columnDefinition = "TEXT")
-    private String contentSummary;
+    @Column(name = "stutter_segments", columnDefinition = "TEXT")
+    private String stutterSegmentsJson;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -67,5 +62,4 @@ public class AudioFeedback {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-
 }
