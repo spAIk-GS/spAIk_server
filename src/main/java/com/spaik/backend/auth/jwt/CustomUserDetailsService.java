@@ -1,6 +1,5 @@
 package com.spaik.backend.auth.jwt;
 
-
 import com.spaik.backend.user.entity.User;
 import com.spaik.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // DB에서 실제 User 엔티티 조회
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getEmail())
-            .password(user.getPassword()) // 소셜 로그인은 빈 문자열일 수 있음
-            .roles(user.getRole().name())  // enum이면 name()으로 문자열 변환
-            .build();
+        // CustomUserDetails 객체로 반환
+        return new CustomUserDetails(user);
     }
 }

@@ -3,6 +3,7 @@ package com.spaik.backend.analysis.controller;
 import com.spaik.backend.analysis.dto.AnalysisStartRequestDto;
 import com.spaik.backend.analysis.dto.AnalysisStartResponseDto;
 import com.spaik.backend.analysis.service.AnalysisService;
+import com.spaik.backend.auth.jwt.CustomUserDetails;
 import com.spaik.backend.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,11 @@ public class AnalysisController {
     @PostMapping("/start")
     public ResponseEntity<AnalysisStartResponseDto> startAnalysis(
             @RequestBody AnalysisStartRequestDto dto,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
-        // DTO 전체를 전달
+        User user = principal.getUser();
         AnalysisStartResponseDto response = analysisService.startAnalysis(dto, user);
         return ResponseEntity.ok(response);
     }
+
 }
