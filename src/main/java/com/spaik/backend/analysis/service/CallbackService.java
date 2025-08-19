@@ -9,11 +9,11 @@ import com.spaik.backend.analysis.dto.ReportResponseDto;
 import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
 import com.spaik.backend.analysis.repository.ReportRepository;
 import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
+import com.spaik.backend.analysis.repository.PresentationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -23,6 +23,7 @@ public class CallbackService {
     private final VideoFeedbackRepository videoFeedbackRepository;
     private final AudioFeedbackRepository audioFeedbackRepository;
     private final ReportRepository reportRepository;
+    private final PresentationRepository presentationRepository;
     private final FinalFeedbackService finalFeedbackService;
     private final SSEService sseService;
     private final ObjectMapper objectMapper;
@@ -30,12 +31,17 @@ public class CallbackService {
     @Transactional
     public Optional<ReportResponseDto> saveAnalysisResult(AnalysisCallbackDto dto) {
 
-        // 1️⃣ Report 조회
+        // 1️⃣ Presentation 조회
+        Presentation presentation = presentationRepository.findByPresentationId(dto.getPresentationId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Presentation not found: " + dto.getPresentationId()));
+
+        // 2️⃣ Report 조회
         Report report = reportRepository.findByPresentationPresentationId(dto.getPresentationId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Report not found for presentationId: " + dto.getPresentationId()));
 
-        // 2️⃣ Video 저장
+        // Video 저장 로직
         if (dto.getVideo() != null) {
             VideoFeedback videoFeedback = videoFeedbackRepository.findByReport(report)
                     .orElse(VideoFeedback.builder()
@@ -71,7 +77,7 @@ public class CallbackService {
             videoFeedbackRepository.save(videoFeedback);
         }
 
-        // 3️⃣ Audio 저장
+        // Audio 저장 로직
         if (dto.getAudio() != null) {
             AudioFeedback audioFeedback = audioFeedbackRepository.findByReport(report)
                     .orElse(AudioFeedback.builder()
@@ -123,7 +129,7 @@ public class CallbackService {
             audioFeedbackRepository.save(audioFeedback);
         }
 
-        // 4️⃣ 최종 피드백 생성 조건 확인
+        // 최종 피드백 생성 조건 확인
         boolean videoCompleted = videoFeedbackRepository.findByReport(report)
                 .map(f -> f.getStatus() == AnalysisStatus.COMPLETED).orElse(false);
         boolean audioCompleted = audioFeedbackRepository.findByReport(report)
