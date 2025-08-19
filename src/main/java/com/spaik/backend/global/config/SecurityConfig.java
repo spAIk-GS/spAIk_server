@@ -57,7 +57,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-
+                                
                                 // 아래 경로는 인증 없이 허용
                                 "/auth/register",
                                 "/auth/login",

@@ -34,25 +34,4 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    // 필요 시 아이디 기반 조회
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-    }
-
-    // 필요 시 아이디 기반 수정
-    public User updateUser(Long id, User updatedUser) {
-        User user = getUserById(id);
-        user.setName(updatedUser.getName());
-        user.setEmail(updatedUser.getEmail());
-        user.setRole(updatedUser.getRole());
-        user.setProvider(updatedUser.getProvider());
-        user.setProviderId(updatedUser.getProviderId());
-        return userRepository.save(user);
-    }
-
-    // 필요 시 아이디 기반 삭제
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import com.spaik.backend.analysis.domain.Presentation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,10 +29,10 @@ public class User {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Role role;  // ex: USER, ADMIN
+    private Role role; 
 
     @Enumerated(EnumType.STRING)
-    private AuthProvider provider;  // ex: LOCAL, GOOGLE
+    private AuthProvider provider;
 
     @Column(name = "provider_id")
     private String providerId;  // Google의 sub 값
@@ -42,5 +43,6 @@ public class User {
 
     // User 삭제 시 관련 Presentation도 삭제
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
     private List<Presentation> presentations;
 }
