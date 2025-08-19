@@ -24,13 +24,11 @@ public class FinalFeedbackService {
 
     @Transactional
     public FinalFeedbackResponseDto createFinalFeedback(FinalFeedbackRequestDto requestDto) {
-        // 1️⃣ Report 조회
         String presentationId = requestDto.getPresentationId();
         Report report = reportRepo.findByPresentationPresentationId(presentationId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Report not found for presentationId: " + presentationId));
 
-        // 2️⃣ AudioFeedback, VideoFeedback 조회
         AudioFeedback audioFeedback = audioRepo.findByReport(report)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "AudioFeedback not found for reportId: " + report.getId()));
@@ -39,11 +37,10 @@ public class FinalFeedbackService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "VideoFeedback not found for reportId: " + report.getId()));
 
-        // 3️⃣ DTO 변환 (AnalysisCallbackDto 기준)
+        // DTO 변환
         AnalysisCallbackDto.AudioAnalysis audioDto = new AnalysisCallbackDto.AudioAnalysis();
         audioDto.setAnalysisId(audioFeedback.getAnalysisIdAudio());
         audioDto.setStatus(audioFeedback.getStatus().name());
-
         var audioResults = new java.util.HashMap<String, AnalysisCallbackDto.AnalysisResult>();
         mapAudioResult("speed", audioFeedback.getSpeedEmotion(), audioFeedback.getSpeedSegmentsJson(), audioResults);
         mapAudioResult("pitch", audioFeedback.getPitchEmotion(), audioFeedback.getPitchSegmentsJson(), audioResults);
@@ -54,7 +51,6 @@ public class FinalFeedbackService {
         AnalysisCallbackDto.VideoAnalysis videoDto = new AnalysisCallbackDto.VideoAnalysis();
         videoDto.setAnalysisId(videoFeedback.getAnalysisIdVideo());
         videoDto.setStatus(videoFeedback.getStatus().name());
-
         var videoResults = new java.util.HashMap<String, AnalysisCallbackDto.AnalysisResult>();
         mapVideoResult("movement", videoFeedback.getMovementEmotion(), videoFeedback.getMovementSegmentsJson(), videoResults);
         mapVideoResult("gaze", videoFeedback.getGazeEmotion(), videoFeedback.getGazeSegmentsJson(), videoResults);
@@ -65,18 +61,18 @@ public class FinalFeedbackService {
         analysisCallbackDto.setAudio(audioDto);
         analysisCallbackDto.setVideo(videoDto);
 
-        // 4️⃣ Gemini API 호출
+        // Gemini API 호출
         String geminiResponseJson;
         try {
             geminiResponseJson = geminiClient.requestFinalFeedback(
                     objectMapper.writeValueAsString(analysisCallbackDto),
-                    objectMapper.writeValueAsString(analysisCallbackDto) // video JSON도 함께 전달
+                    objectMapper.writeValueAsString(analysisCallbackDto)
             );
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to serialize analysis DTO for Gemini", e);
         }
 
-        // 5️⃣ Gemini 응답 파싱
+        // Gemini 응답 파싱
         String finalFeedbackText;
         try {
             JsonNode rootNode = objectMapper.readTree(geminiResponseJson);
@@ -92,14 +88,13 @@ public class FinalFeedbackService {
             throw new RuntimeException("Failed to parse Gemini API response", e);
         }
 
-        // 6️⃣ FinalFeedback 저장
+        // FinalFeedback 저장
         FinalFeedback finalFeedback = FinalFeedback.builder()
                 .report(report)
                 .finalFeedback(finalFeedbackText)
                 .build();
         finalFeedbackRepo.save(finalFeedback);
 
-        // 7️⃣ 응답 DTO 반환
         return FinalFeedbackResponseDto.builder()
                 .finalFeedbackId(finalFeedback.getId())
                 .reportId(report.getId())
@@ -107,7 +102,7 @@ public class FinalFeedbackService {
                 .build();
     }
 
-    // --- Helper Methods ---
+    // Helper methods
     private void mapAudioResult(String key, String emotion, String jsonSegments,
                                 java.util.Map<String, AnalysisCallbackDto.AnalysisResult> results) {
         if (jsonSegments != null) {

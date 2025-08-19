@@ -41,7 +41,6 @@ public class CallbackService {
                     .orElse(VideoFeedback.builder()
                             .report(report)
                             .status(AnalysisStatus.PENDING)
-                            .createdAt(LocalDateTime.now())
                             .build());
 
             videoFeedback.setAnalysisIdVideo(dto.getVideo().getAnalysisId());
@@ -49,16 +48,21 @@ public class CallbackService {
 
             if (dto.getVideo().getResults() != null) {
                 try {
+                    // movement
                     AnalysisCallbackDto.AnalysisResult movementResult = dto.getVideo().getResults().get("movement");
                     if (movementResult != null) {
                         videoFeedback.setMovementEmotion(movementResult.getEmotion());
-                        videoFeedback.setMovementSegmentsJson(objectMapper.writeValueAsString(movementResult.getSegments()));
+                        videoFeedback.setMovementSegmentsJson(
+                                objectMapper.writeValueAsString(movementResult.getSegments())
+                        );
                     }
-
+                    // gaze
                     AnalysisCallbackDto.AnalysisResult gazeResult = dto.getVideo().getResults().get("gaze");
                     if (gazeResult != null) {
                         videoFeedback.setGazeEmotion(gazeResult.getEmotion());
-                        videoFeedback.setGazeSegmentsJson(objectMapper.writeValueAsString(gazeResult.getSegments()));
+                        videoFeedback.setGazeSegmentsJson(
+                                objectMapper.writeValueAsString(gazeResult.getSegments())
+                        );
                     }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to serialize video segments", e);
@@ -73,7 +77,6 @@ public class CallbackService {
                     .orElse(AudioFeedback.builder()
                             .report(report)
                             .status(AnalysisStatus.PENDING)
-                            .createdAt(LocalDateTime.now())
                             .build());
 
             audioFeedback.setAnalysisIdAudio(dto.getAudio().getAnalysisId());
@@ -81,28 +84,37 @@ public class CallbackService {
 
             if (dto.getAudio().getResults() != null) {
                 try {
+                    // speed
                     AnalysisCallbackDto.AnalysisResult speedResult = dto.getAudio().getResults().get("speed");
                     if (speedResult != null) {
                         audioFeedback.setSpeedEmotion(speedResult.getEmotion());
-                        audioFeedback.setSpeedSegmentsJson(objectMapper.writeValueAsString(speedResult.getSegments()));
+                        audioFeedback.setSpeedSegmentsJson(
+                                objectMapper.writeValueAsString(speedResult.getSegments())
+                        );
                     }
-
+                    // pitch
                     AnalysisCallbackDto.AnalysisResult pitchResult = dto.getAudio().getResults().get("pitch");
                     if (pitchResult != null) {
                         audioFeedback.setPitchEmotion(pitchResult.getEmotion());
-                        audioFeedback.setPitchSegmentsJson(objectMapper.writeValueAsString(pitchResult.getSegments()));
+                        audioFeedback.setPitchSegmentsJson(
+                                objectMapper.writeValueAsString(pitchResult.getSegments())
+                        );
                     }
-
+                    // volume
                     AnalysisCallbackDto.AnalysisResult volumeResult = dto.getAudio().getResults().get("volume");
                     if (volumeResult != null) {
                         audioFeedback.setVolumeEmotion(volumeResult.getEmotion());
-                        audioFeedback.setVolumeSegmentsJson(objectMapper.writeValueAsString(volumeResult.getSegments()));
+                        audioFeedback.setVolumeSegmentsJson(
+                                objectMapper.writeValueAsString(volumeResult.getSegments())
+                        );
                     }
-
+                    // stutter
                     AnalysisCallbackDto.AnalysisResult stutterResult = dto.getAudio().getResults().get("stutter");
                     if (stutterResult != null) {
                         audioFeedback.setStutterEmotion(stutterResult.getEmotion());
-                        audioFeedback.setStutterSegmentsJson(objectMapper.writeValueAsString(stutterResult.getSegments()));
+                        audioFeedback.setStutterSegmentsJson(
+                                objectMapper.writeValueAsString(stutterResult.getSegments())
+                        );
                     }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to serialize audio segments", e);
@@ -111,7 +123,7 @@ public class CallbackService {
             audioFeedbackRepository.save(audioFeedback);
         }
 
-        // 4️⃣ 최종 피드백 생성 조건 확인 (실제 생성은 FinalFeedbackService에서 처리)
+        // 4️⃣ 최종 피드백 생성 조건 확인
         boolean videoCompleted = videoFeedbackRepository.findByReport(report)
                 .map(f -> f.getStatus() == AnalysisStatus.COMPLETED).orElse(false);
         boolean audioCompleted = audioFeedbackRepository.findByReport(report)
@@ -119,7 +131,6 @@ public class CallbackService {
 
         ReportResponseDto finalReport = null;
         if (videoCompleted && audioCompleted && report.getFinalFeedback() == null) {
-            // ✅ FinalFeedbackService에서 처리
             FinalFeedbackRequestDto requestDto = FinalFeedbackRequestDto.builder()
                     .presentationId(report.getPresentation().getPresentationId())
                     .build();
@@ -131,7 +142,6 @@ public class CallbackService {
                     .createdAt(report.getCreatedAt())
                     .build();
 
-            // 5️⃣ SSE로 프론트에 실시간 전송
             sseService.sendUpdate(report.getPresentation().getPresentationId(), finalReport);
         }
 
