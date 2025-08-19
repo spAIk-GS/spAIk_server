@@ -9,7 +9,6 @@ import com.spaik.backend.analysis.dto.ReportResponseDto;
 import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
 import com.spaik.backend.analysis.repository.ReportRepository;
 import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,10 +49,17 @@ public class CallbackService {
 
             if (dto.getVideo().getResults() != null) {
                 try {
-                    videoFeedback.setMovementSegmentsJson(
-                            objectMapper.writeValueAsString(dto.getVideo().getResults().get("movement")));
-                    videoFeedback.setGazeSegmentsJson(
-                            objectMapper.writeValueAsString(dto.getVideo().getResults().get("gaze")));
+                    AnalysisCallbackDto.AnalysisResult movementResult = dto.getVideo().getResults().get("movement");
+                    if (movementResult != null) {
+                        videoFeedback.setMovementEmotion(movementResult.getEmotion());
+                        videoFeedback.setMovementSegmentsJson(objectMapper.writeValueAsString(movementResult.getSegments()));
+                    }
+
+                    AnalysisCallbackDto.AnalysisResult gazeResult = dto.getVideo().getResults().get("gaze");
+                    if (gazeResult != null) {
+                        videoFeedback.setGazeEmotion(gazeResult.getEmotion());
+                        videoFeedback.setGazeSegmentsJson(objectMapper.writeValueAsString(gazeResult.getSegments()));
+                    }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to serialize video segments", e);
                 }
@@ -75,10 +81,29 @@ public class CallbackService {
 
             if (dto.getAudio().getResults() != null) {
                 try {
-                    audioFeedback.setSpeedSegmentsJson(
-                            objectMapper.writeValueAsString(dto.getAudio().getResults().get("speed")));
-                    audioFeedback.setPitchSegmentsJson(
-                            objectMapper.writeValueAsString(dto.getAudio().getResults().get("pitch")));
+                    AnalysisCallbackDto.AnalysisResult speedResult = dto.getAudio().getResults().get("speed");
+                    if (speedResult != null) {
+                        audioFeedback.setSpeedEmotion(speedResult.getEmotion());
+                        audioFeedback.setSpeedSegmentsJson(objectMapper.writeValueAsString(speedResult.getSegments()));
+                    }
+
+                    AnalysisCallbackDto.AnalysisResult pitchResult = dto.getAudio().getResults().get("pitch");
+                    if (pitchResult != null) {
+                        audioFeedback.setPitchEmotion(pitchResult.getEmotion());
+                        audioFeedback.setPitchSegmentsJson(objectMapper.writeValueAsString(pitchResult.getSegments()));
+                    }
+
+                    AnalysisCallbackDto.AnalysisResult volumeResult = dto.getAudio().getResults().get("volume");
+                    if (volumeResult != null) {
+                        audioFeedback.setVolumeEmotion(volumeResult.getEmotion());
+                        audioFeedback.setVolumeSegmentsJson(objectMapper.writeValueAsString(volumeResult.getSegments()));
+                    }
+
+                    AnalysisCallbackDto.AnalysisResult stutterResult = dto.getAudio().getResults().get("stutter");
+                    if (stutterResult != null) {
+                        audioFeedback.setStutterEmotion(stutterResult.getEmotion());
+                        audioFeedback.setStutterSegmentsJson(objectMapper.writeValueAsString(stutterResult.getSegments()));
+                    }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to serialize audio segments", e);
                 }
@@ -86,7 +111,7 @@ public class CallbackService {
             audioFeedbackRepository.save(audioFeedback);
         }
 
-        // 4️⃣ 최종 피드백 생성
+        // 4️⃣ 최종 피드백 생성 조건 확인 (실제 생성은 FinalFeedbackService에서 처리)
         boolean videoCompleted = videoFeedbackRepository.findByReport(report)
                 .map(f -> f.getStatus() == AnalysisStatus.COMPLETED).orElse(false);
         boolean audioCompleted = audioFeedbackRepository.findByReport(report)
@@ -94,7 +119,7 @@ public class CallbackService {
 
         ReportResponseDto finalReport = null;
         if (videoCompleted && audioCompleted && report.getFinalFeedback() == null) {
-            // ✅ FinalFeedbackRequestDto 생성 후 전달
+            // ✅ FinalFeedbackService에서 처리
             FinalFeedbackRequestDto requestDto = FinalFeedbackRequestDto.builder()
                     .presentationId(report.getPresentation().getPresentationId())
                     .build();

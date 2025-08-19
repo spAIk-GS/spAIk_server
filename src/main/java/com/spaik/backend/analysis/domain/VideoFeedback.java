@@ -33,13 +33,11 @@ public class VideoFeedback {
     /** 분석 결과 */
     @Column(name = "movement_emotion")
     private String movementEmotion;
-
-    @Column(name = "movement_segments", columnDefinition = "TEXT")
-    private String movementSegmentsJson;
-
     @Column(name = "gaze_emotion")
     private String gazeEmotion;
 
+    @Column(name = "movement_segments", columnDefinition = "TEXT")
+    private String movementSegmentsJson;
     @Column(name = "gaze_segments", columnDefinition = "TEXT")
     private String gazeSegmentsJson;
 

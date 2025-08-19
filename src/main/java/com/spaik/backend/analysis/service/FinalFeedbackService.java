@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spaik.backend.analysis.domain.*;
-import com.spaik.backend.analysis.dto.FinalFeedbackRequestDto;
-import com.spaik.backend.analysis.dto.FinalFeedbackResponseDto;
+import com.spaik.backend.analysis.dto.*;
 import com.spaik.backend.analysis.gemini.GeminiClient;
 import com.spaik.backend.analysis.repository.*;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +24,13 @@ public class FinalFeedbackService {
 
     @Transactional
     public FinalFeedbackResponseDto createFinalFeedback(FinalFeedbackRequestDto requestDto) {
-        // 1Report 조회
+        // 1️⃣ Report 조회
         String presentationId = requestDto.getPresentationId();
         Report report = reportRepo.findByPresentationPresentationId(presentationId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Report not found for presentationId: " + presentationId));
 
-        // AudioFeedback, VideoFeedback 조회
+        // 2️⃣ AudioFeedback, VideoFeedback 조회
         AudioFeedback audioFeedback = audioRepo.findByReport(report)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "AudioFeedback not found for reportId: " + report.getId()));
@@ -41,20 +39,44 @@ public class FinalFeedbackService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "VideoFeedback not found for reportId: " + report.getId()));
 
-        // JSON 변환 (모든 분석 데이터 포함)
-        String audioJson;
-        String videoJson;
+        // 3️⃣ DTO 변환 (AnalysisCallbackDto 기준)
+        AnalysisCallbackDto.AudioAnalysis audioDto = new AnalysisCallbackDto.AudioAnalysis();
+        audioDto.setAnalysisId(audioFeedback.getAnalysisIdAudio());
+        audioDto.setStatus(audioFeedback.getStatus().name());
+
+        var audioResults = new java.util.HashMap<String, AnalysisCallbackDto.AnalysisResult>();
+        mapAudioResult("speed", audioFeedback.getSpeedEmotion(), audioFeedback.getSpeedSegmentsJson(), audioResults);
+        mapAudioResult("pitch", audioFeedback.getPitchEmotion(), audioFeedback.getPitchSegmentsJson(), audioResults);
+        mapAudioResult("volume", audioFeedback.getVolumeEmotion(), audioFeedback.getVolumeSegmentsJson(), audioResults);
+        mapAudioResult("stutter", audioFeedback.getStutterEmotion(), audioFeedback.getStutterSegmentsJson(), audioResults);
+        audioDto.setResults(audioResults);
+
+        AnalysisCallbackDto.VideoAnalysis videoDto = new AnalysisCallbackDto.VideoAnalysis();
+        videoDto.setAnalysisId(videoFeedback.getAnalysisIdVideo());
+        videoDto.setStatus(videoFeedback.getStatus().name());
+
+        var videoResults = new java.util.HashMap<String, AnalysisCallbackDto.AnalysisResult>();
+        mapVideoResult("movement", videoFeedback.getMovementEmotion(), videoFeedback.getMovementSegmentsJson(), videoResults);
+        mapVideoResult("gaze", videoFeedback.getGazeEmotion(), videoFeedback.getGazeSegmentsJson(), videoResults);
+        videoDto.setResults(videoResults);
+
+        AnalysisCallbackDto analysisCallbackDto = new AnalysisCallbackDto();
+        analysisCallbackDto.setPresentationId(presentationId);
+        analysisCallbackDto.setAudio(audioDto);
+        analysisCallbackDto.setVideo(videoDto);
+
+        // 4️⃣ Gemini API 호출
+        String geminiResponseJson;
         try {
-            audioJson = objectMapper.writeValueAsString(audioFeedback);
-            videoJson = objectMapper.writeValueAsString(videoFeedback);
+            geminiResponseJson = geminiClient.requestFinalFeedback(
+                    objectMapper.writeValueAsString(analysisCallbackDto),
+                    objectMapper.writeValueAsString(analysisCallbackDto) // video JSON도 함께 전달
+            );
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize feedback to JSON", e);
+            throw new RuntimeException("Failed to serialize analysis DTO for Gemini", e);
         }
 
-        // Gemini API 호출
-        String geminiResponseJson = geminiClient.requestFinalFeedback(audioJson, videoJson);
-
-        // Gemini 응답 파싱
+        // 5️⃣ Gemini 응답 파싱
         String finalFeedbackText;
         try {
             JsonNode rootNode = objectMapper.readTree(geminiResponseJson);
@@ -70,18 +92,51 @@ public class FinalFeedbackService {
             throw new RuntimeException("Failed to parse Gemini API response", e);
         }
 
-        // FinalFeedback 저장
+        // 6️⃣ FinalFeedback 저장
         FinalFeedback finalFeedback = FinalFeedback.builder()
                 .report(report)
                 .finalFeedback(finalFeedbackText)
                 .build();
         finalFeedbackRepo.save(finalFeedback);
 
-        // 응답 DTO 반환
+        // 7️⃣ 응답 DTO 반환
         return FinalFeedbackResponseDto.builder()
                 .finalFeedbackId(finalFeedback.getId())
                 .reportId(report.getId())
                 .finalFeedback(finalFeedback.getFinalFeedback())
                 .build();
+    }
+
+    // --- Helper Methods ---
+    private void mapAudioResult(String key, String emotion, String jsonSegments,
+                                java.util.Map<String, AnalysisCallbackDto.AnalysisResult> results) {
+        if (jsonSegments != null) {
+            AnalysisCallbackDto.AnalysisResult result = new AnalysisCallbackDto.AnalysisResult();
+            result.setEmotion(emotion);
+            try {
+                result.setSegments(java.util.Arrays.asList(
+                        objectMapper.readValue(jsonSegments, AnalysisCallbackDto.Segment[].class)
+                ));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Failed to parse " + key + " segments JSON", e);
+            }
+            results.put(key, result);
+        }
+    }
+
+    private void mapVideoResult(String key, String emotion, String jsonSegments,
+                                java.util.Map<String, AnalysisCallbackDto.AnalysisResult> results) {
+        if (jsonSegments != null) {
+            AnalysisCallbackDto.AnalysisResult result = new AnalysisCallbackDto.AnalysisResult();
+            result.setEmotion(emotion);
+            try {
+                result.setSegments(java.util.Arrays.asList(
+                        objectMapper.readValue(jsonSegments, AnalysisCallbackDto.Segment[].class)
+                ));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Failed to parse " + key + " segments JSON", e);
+            }
+            results.put(key, result);
+        }
     }
 }

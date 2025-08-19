@@ -32,26 +32,20 @@ public class AudioFeedback {
 
     /** 분석 결과 */
     @Column(name = "speed_emotion")
-    private String speedEmotion; // "좋음", "보통", "부족"
-
-    @Column(name = "speed_segments", columnDefinition = "TEXT")
-    private String speedSegmentsJson; // segments JSON 저장
-
+    private String speedEmotion;
     @Column(name = "pitch_emotion")
     private String pitchEmotion;
-
-    @Column(name = "pitch_segments", columnDefinition = "TEXT")
-    private String pitchSegmentsJson;
-
     @Column(name = "volume_emotion")
     private String volumeEmotion;
-
-    @Column(name = "volume_segments", columnDefinition = "TEXT")
-    private String volumeSegmentsJson;
-
     @Column(name = "stutter_emotion")
     private String stutterEmotion;
 
+    @Column(name = "speed_segments", columnDefinition = "TEXT")
+    private String speedSegmentsJson;
+    @Column(name = "pitch_segments", columnDefinition = "TEXT")
+    private String pitchSegmentsJson;
+    @Column(name = "volume_segments", columnDefinition = "TEXT")
+    private String volumeSegmentsJson;
     @Column(name = "stutter_segments", columnDefinition = "TEXT")
     private String stutterSegmentsJson;
 

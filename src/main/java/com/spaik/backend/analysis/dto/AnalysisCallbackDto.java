@@ -27,7 +27,18 @@ public class AnalysisCallbackDto {
     @Data
     public static class AnalysisResult {
         private String emotion; // "좋음", "보통", "나쁨"
+
+        // 공통 세그먼트
         private List<Segment> segments;
+
+        // audio/video 추가 필드
+        private String feedback;           // speed, pitch, volume, stutter 공통
+        private Double value;              // speed, pitch 값
+        private Double decibels;           // volume 전용
+        private List<String> volume_anomalies; // volume 전용
+
+        private Integer stutter_count;     // stutter 전용
+        private List<StutterDetail> stutter_details; // stutter 전용
     }
 
     @Data
@@ -39,7 +50,12 @@ public class AnalysisCallbackDto {
         private Double value;            // speed, pitch 등 값
         private Double movement_percent; // video movement 전용
         private Double focus_level;      // video gaze 전용
+    }
 
-        // 필요에 따라 다른 필드 추가 가능 (예: decibel, stutter 단어)
+    @Data
+    public static class StutterDetail {
+        private String sentence;
+        private List<String> timestamps;
+        private List<String> stutter_words;
     }
 }
