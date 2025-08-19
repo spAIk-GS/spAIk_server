@@ -1,5 +1,6 @@
 package com.spaik.backend.analysis.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,10 +65,13 @@ public class FinalFeedbackService {
         // Gemini API 호출
         String geminiResponseJson;
         try {
-            geminiResponseJson = geminiClient.requestFinalFeedback(
-                    objectMapper.writeValueAsString(analysisCallbackDto),
-                    objectMapper.writeValueAsString(analysisCallbackDto)
-            );
+            // null 필드 제거해 토큰 절감
+            String payload = objectMapper.copy()
+                    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                    .writeValueAsString(analysisCallbackDto);
+
+            geminiResponseJson = geminiClient.requestFinalFeedback(payload);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to serialize analysis DTO for Gemini", e);
         }
@@ -102,36 +106,44 @@ public class FinalFeedbackService {
                 .build();
     }
 
-    // Helper methods
+    private java.util.List<AnalysisCallbackDto.Segment> parseSegmentsToList(String json) {
+        if (json == null) return java.util.Collections.emptyList();
+        String trimmed = json.trim();
+        if (trimmed.isEmpty() || "null".equalsIgnoreCase(trimmed)) {
+            return java.util.Collections.emptyList();
+        }
+        try {
+            AnalysisCallbackDto.Segment[] arr =
+                    objectMapper.readValue(trimmed, AnalysisCallbackDto.Segment[].class);
+            if (arr == null) return java.util.Collections.emptyList();
+            return java.util.Arrays.asList(arr); // arr는 이제 null 아님
+        } catch (Exception e) {
+            // 파싱 실패 시도 빈 리스트로 폴백 (로그는 필요시 추가)
+            return java.util.Collections.emptyList();
+        }
+    }
+
     private void mapAudioResult(String key, String emotion, String jsonSegments,
                                 java.util.Map<String, AnalysisCallbackDto.AnalysisResult> results) {
-        if (jsonSegments != null) {
-            AnalysisCallbackDto.AnalysisResult result = new AnalysisCallbackDto.AnalysisResult();
-            result.setEmotion(emotion);
-            try {
-                result.setSegments(java.util.Arrays.asList(
-                        objectMapper.readValue(jsonSegments, AnalysisCallbackDto.Segment[].class)
-                ));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Failed to parse " + key + " segments JSON", e);
-            }
-            results.put(key, result);
+        java.util.List<AnalysisCallbackDto.Segment> segs = parseSegmentsToList(jsonSegments);
+        if (segs.isEmpty() && (emotion == null || emotion.isBlank())) {
+            return; // 완전 빈 데이터면 스킵
         }
+        AnalysisCallbackDto.AnalysisResult result = new AnalysisCallbackDto.AnalysisResult();
+        result.setEmotion(emotion);
+        result.setSegments(segs);
+        results.put(key, result);
     }
 
     private void mapVideoResult(String key, String emotion, String jsonSegments,
                                 java.util.Map<String, AnalysisCallbackDto.AnalysisResult> results) {
-        if (jsonSegments != null) {
-            AnalysisCallbackDto.AnalysisResult result = new AnalysisCallbackDto.AnalysisResult();
-            result.setEmotion(emotion);
-            try {
-                result.setSegments(java.util.Arrays.asList(
-                        objectMapper.readValue(jsonSegments, AnalysisCallbackDto.Segment[].class)
-                ));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Failed to parse " + key + " segments JSON", e);
-            }
-            results.put(key, result);
+        java.util.List<AnalysisCallbackDto.Segment> segs = parseSegmentsToList(jsonSegments);
+        if (segs.isEmpty() && (emotion == null || emotion.isBlank())) {
+            return;
         }
+        AnalysisCallbackDto.AnalysisResult result = new AnalysisCallbackDto.AnalysisResult();
+        result.setEmotion(emotion);
+        result.setSegments(segs);
+        results.put(key, result);
     }
 }

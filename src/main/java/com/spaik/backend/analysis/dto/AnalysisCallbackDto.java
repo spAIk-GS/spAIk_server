@@ -27,7 +27,8 @@ public class AnalysisCallbackDto {
     @Data
     public static class AnalysisResult {
         private String emotion;             // "좋음", "보통", "나쁨"
-
+        private Double movement_percent; // ← 추가: movement 결과 레벨
+        private Double focus_level;      // ← 추가: gaze 결과 레벨
         // 공통 세그먼트
         private List<Segment> segments;
 

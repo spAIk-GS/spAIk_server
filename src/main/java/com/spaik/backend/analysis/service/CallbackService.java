@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +60,10 @@ public class CallbackService {
                     if (movementResult != null) {
                         videoFeedback.setMovementEmotion(movementResult.getEmotion());
                         videoFeedback.setMovementSegmentsJson(
-                                objectMapper.writeValueAsString(movementResult.getSegments())
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(movementResult.getSegments())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
                         );
                     }
                     // gaze
@@ -67,7 +71,10 @@ public class CallbackService {
                     if (gazeResult != null) {
                         videoFeedback.setGazeEmotion(gazeResult.getEmotion());
                         videoFeedback.setGazeSegmentsJson(
-                                objectMapper.writeValueAsString(gazeResult.getSegments())
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(gazeResult.getSegments())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
                         );
                     }
                 } catch (JsonProcessingException e) {
@@ -95,7 +102,10 @@ public class CallbackService {
                     if (speedResult != null) {
                         audioFeedback.setSpeedEmotion(speedResult.getEmotion());
                         audioFeedback.setSpeedSegmentsJson(
-                                objectMapper.writeValueAsString(speedResult.getSegments())
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(speedResult.getSegments())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
                         );
                     }
                     // pitch
@@ -103,7 +113,10 @@ public class CallbackService {
                     if (pitchResult != null) {
                         audioFeedback.setPitchEmotion(pitchResult.getEmotion());
                         audioFeedback.setPitchSegmentsJson(
-                                objectMapper.writeValueAsString(pitchResult.getSegments())
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(pitchResult.getSegments())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
                         );
                     }
                     // volume
@@ -111,7 +124,10 @@ public class CallbackService {
                     if (volumeResult != null) {
                         audioFeedback.setVolumeEmotion(volumeResult.getEmotion());
                         audioFeedback.setVolumeSegmentsJson(
-                                objectMapper.writeValueAsString(volumeResult.getSegments())
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(volumeResult.getSegments())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
                         );
                     }
                     // stutter
@@ -119,7 +135,10 @@ public class CallbackService {
                     if (stutterResult != null) {
                         audioFeedback.setStutterEmotion(stutterResult.getEmotion());
                         audioFeedback.setStutterSegmentsJson(
-                                objectMapper.writeValueAsString(stutterResult.getSegments())
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(stutterResult.getSegments())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
                         );
                     }
                 } catch (JsonProcessingException e) {
@@ -140,7 +159,15 @@ public class CallbackService {
             FinalFeedbackRequestDto requestDto = FinalFeedbackRequestDto.builder()
                     .presentationId(report.getPresentation().getPresentationId())
                     .build();
-            finalFeedbackService.createFinalFeedback(requestDto);
+            //finalFeedbackService.createFinalFeedback(requestDto);
+            CompletableFuture.runAsync(() -> {
+                try {
+                    finalFeedbackService.createFinalFeedback(requestDto);
+                } catch (Exception e) {
+                    // 최소 수정: 콘솔 로그. (원하면 slf4j 로깅으로 교체 가능)
+                    e.printStackTrace();
+                }
+            });
 
             finalReport = ReportResponseDto.builder()
                     .reportId(report.getId())
