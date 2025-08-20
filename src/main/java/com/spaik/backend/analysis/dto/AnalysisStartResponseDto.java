@@ -8,4 +8,5 @@ import lombok.Getter;
 @Builder
 public class AnalysisStartResponseDto {
     private String status; // PENDING
+    private String presentationId;
 }

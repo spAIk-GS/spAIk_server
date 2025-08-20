@@ -1,5 +1,6 @@
 package com.spaik.backend.analysis.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.spaik.backend.analysis.dto.AnalysisCallbackDto;
 import com.spaik.backend.analysis.dto.ReportResponseDto;
 import com.spaik.backend.analysis.service.CallbackService;
@@ -18,7 +19,7 @@ public class CallbackController {
 
     // AI 서버 콜백 수신
     @PostMapping("/callback")
-    public ResponseEntity<ReportResponseDto> receiveFullAnalysisResult(@RequestBody AnalysisCallbackDto dto) {
+    public ResponseEntity<ReportResponseDto> receiveFullAnalysisResult(@RequestBody AnalysisCallbackDto dto) throws JsonProcessingException {
         Optional<ReportResponseDto> responseDto = callbackService.saveAnalysisResult(dto); // ← 여기
         return responseDto.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.noContent().build());

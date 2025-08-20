@@ -10,4 +10,5 @@ public class ReportResponseDto {
     private Long reportId;
     private String presentationId;
     private LocalDateTime createdAt;
+    private String finalFeedback;
 }

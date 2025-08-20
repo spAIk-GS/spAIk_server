@@ -3,9 +3,7 @@ package com.spaik.backend.analysis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spaik.backend.analysis.domain.*;
-import com.spaik.backend.analysis.dto.AnalysisCallbackDto;
-import com.spaik.backend.analysis.dto.FinalFeedbackRequestDto;
-import com.spaik.backend.analysis.dto.ReportResponseDto;
+import com.spaik.backend.analysis.dto.*;
 import com.spaik.backend.analysis.repository.AudioFeedbackRepository;
 import com.spaik.backend.analysis.repository.ReportRepository;
 import com.spaik.backend.analysis.repository.VideoFeedbackRepository;
@@ -14,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,7 +29,7 @@ public class CallbackService {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public Optional<ReportResponseDto> saveAnalysisResult(AnalysisCallbackDto dto) {
+    public Optional<ReportResponseDto> saveAnalysisResult(AnalysisCallbackDto dto) throws JsonProcessingException {
 
         // 1️⃣ Presentation 조회
         Presentation presentation = presentationRepository.findByPresentationId(dto.getPresentationId())
@@ -159,23 +158,35 @@ public class CallbackService {
             FinalFeedbackRequestDto requestDto = FinalFeedbackRequestDto.builder()
                     .presentationId(report.getPresentation().getPresentationId())
                     .build();
-            //finalFeedbackService.createFinalFeedback(requestDto);
-            CompletableFuture.runAsync(() -> {
-                try {
-                    finalFeedbackService.createFinalFeedback(requestDto);
-                } catch (Exception e) {
-                    // 최소 수정: 콘솔 로그. (원하면 slf4j 로깅으로 교체 가능)
-                    e.printStackTrace();
-                }
-            });
 
-            finalReport = ReportResponseDto.builder()
+            FinalFeedbackResponseDto feedbackResponse = finalFeedbackService.createFinalFeedback(requestDto);
+
+            // 1. 종합 피드백 DTO 생성 (기존 finalReport)
+            ReportResponseDto summaryDto = ReportResponseDto.builder()
                     .reportId(report.getId())
                     .presentationId(report.getPresentation().getPresentationId())
                     .createdAt(report.getCreatedAt())
+                    .finalFeedback(feedbackResponse.getFinalFeedback())
                     .build();
 
-            sseService.sendUpdate(report.getPresentation().getPresentationId(), finalReport);
+            // 2. 상세 분석 데이터 DTO는 이미 'dto' 파라미터에 있습니다.
+            AnalysisCallbackDto detailDto = dto;
+
+            // 3. 새로 만든 FinalAnalysisResultDto에 종합과 상세 데이터를 모두 담습니다.
+            FinalAnalysisResultDto finalResult = FinalAnalysisResultDto.builder()
+                    .summary(summaryDto)
+                    .details(detailDto)
+                    .build();
+
+            // 4. 최종 결과 객체를 JSON으로 변환하여 SSE로 전송합니다.
+            String finalResultJson = objectMapper.writeValueAsString(Map.of(
+                    "status", "COMPLETED",
+                    "result", finalResult // 👈 finalReport 대신 finalResult를 담습니다.
+            ));
+            sseService.sendUpdate(report.getPresentation().getPresentationId(), finalResultJson);
+
+            // Optional<ReportResponseDto>를 반환해야 하므로 기존 finalReport 변수를 사용합니다.
+            finalReport = summaryDto;
         }
 
         return Optional.ofNullable(finalReport);
