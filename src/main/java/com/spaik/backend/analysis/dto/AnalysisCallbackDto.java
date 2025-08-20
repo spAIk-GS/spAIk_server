@@ -35,7 +35,7 @@ public class AnalysisCallbackDto {
         // Audio 전용
         private Double value;               // speed, pitch
         private Double decibels;            // volume
-        private List<String> volume_anomalies; // volume
+        private List<VolumeAnomaly> volume_anomalies; // volume
         private Integer stutter_count;      // stutter
         private List<StutterDetail> stutter_details; // stutter
     }
@@ -56,5 +56,13 @@ public class AnalysisCallbackDto {
         private String sentence;
         private List<String> timestamps;
         private List<String> stutter_words;
+    }
+
+    @Data
+    public static class VolumeAnomaly {
+        private String sentence;
+        private String timestamp;
+        private Double avg_decibels;
+        private String feedback;
     }
 }
