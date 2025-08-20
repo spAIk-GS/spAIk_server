@@ -90,6 +90,7 @@ public class AnalysisService {
         // 8️⃣ 프론트 응답 반환
         return AnalysisStartResponseDto.builder()
                 .status("PENDING")
+                .presentationId(presentation.getPresentationId())
                 .build();
     }
 }

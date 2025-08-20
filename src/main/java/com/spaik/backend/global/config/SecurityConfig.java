@@ -69,7 +69,8 @@ public class SecurityConfig {
                                 "/thumbnails/presign-get",
 
                                 "/analysis/callback",
-                                "/analysis/callback/**"
+                                "/analysis/callback/**",
+                                "/analysis/subscribe/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

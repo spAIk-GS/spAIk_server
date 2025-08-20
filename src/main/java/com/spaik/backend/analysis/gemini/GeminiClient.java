@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GeminiClient {
 
     private final RestClient geminiRestClient;
@@ -61,11 +63,17 @@ public class GeminiClient {
 
     /** 429(쿼터/레이트리밋) 시 RetryInfo 기반 백오프 재시도 */
     private String callGeminiWithRetry(Map<String, Object> requestBody, int maxAttempts) {
+        log.info("[Gemini API] 현재 사용 중인 API 키의 끝 5자리: ...{}",
+                geminiApiKey.substring(geminiApiKey.length() - 5));
         int attempt = 0;
         while (true) {
             attempt++;
             try {
-                return geminiRestClient.post()
+                // ▼▼▼ 1. 요청 직전 로그 ▼▼▼
+                log.info("[Gemini API] 요청 시작 (시도: {}/{})", attempt, maxAttempts);
+                // log.debug("[Gemini API] 요청 본문: {}", objectMapper.writeValueAsString(requestBody)); // (필요 시) 전체 요청 내용을 보려면 이 로그의 주석을 푸세요.
+
+                String response = geminiRestClient.post()
                         .uri(uriBuilder -> uriBuilder
                                 .path(MODEL_PATH)
                                 .queryParam("key", geminiApiKey)
@@ -76,11 +84,28 @@ public class GeminiClient {
                         .retrieve()
                         .body(String.class);
 
+                // ▼▼▼ 2. 성공 응답 로그 ▼▼▼
+                log.info("[Gemini API] 응답 성공!");
+                // log.debug("[Gemini API] 응답 내용 (Raw): {}", response); // (필요 시) 전체 응답 내용을 보려면 이 로그의 주석을 푸세요.
+
+                return response;
+
             } catch (HttpClientErrorException.TooManyRequests e) {
+                // ▼▼▼ 3. 특정 오류(429) 로그 ▼▼▼
                 long delayMs = parseRetryDelayMs(e.getResponseBodyAsString())
-                        .orElse(4000L * attempt); // RetryInfo 없으면 점증 백오프
+                        .orElse(4000L * attempt);
+                log.warn("[Gemini API] 오류 (429 Too Many Requests): {}ms 후 재시도합니다.", delayMs);
+
                 sleep(delayMs);
-                if (attempt >= maxAttempts) throw e;
+                if (attempt >= maxAttempts) {
+                    log.error("[Gemini API] 최대 재시도 횟수({})를 초과했습니다.", maxAttempts);
+                    throw e;
+                }
+
+            } catch (Exception e) {
+                // ▼▼▼ 4. 그 외 모든 오류 로그 ▼▼▼
+                log.error("[Gemini API] 처리 중 심각한 오류 발생 (시도: {}): ", attempt, e);
+                throw new RuntimeException("Gemini API 호출에 실패했습니다.", e);
             }
         }
     }
