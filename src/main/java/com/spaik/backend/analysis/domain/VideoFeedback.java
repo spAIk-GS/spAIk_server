@@ -36,6 +36,16 @@ public class VideoFeedback {
     @Column(name = "gaze_emotion")
     private String gazeEmotion;
 
+
+
+    @Column(name = "movement_percent")
+    private Double movementPercent;
+
+    @Column(name = "focus_level")
+    private Double focusLevel;
+
+
+
     @Column(name = "movement_segments", columnDefinition = "TEXT")
     private String movementSegmentsJson;
     @Column(name = "gaze_segments", columnDefinition = "TEXT")
