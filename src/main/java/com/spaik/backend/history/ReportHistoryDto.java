@@ -15,4 +15,5 @@ public class ReportHistoryDto {
     private Long reportId;
     private String presentationId;
     private LocalDateTime createdAt;
+    private String thumbnailUrl;
 }

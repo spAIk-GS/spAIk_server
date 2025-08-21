@@ -58,6 +58,7 @@ public class CallbackService {
                     AnalysisCallbackDto.AnalysisResult movementResult = dto.getVideo().getResults().get("movement");
                     if (movementResult != null) {
                         videoFeedback.setMovementEmotion(movementResult.getEmotion());
+                        videoFeedback.setMovementPercent(movementResult.getMovement_percent());
                         videoFeedback.setMovementSegmentsJson(
                                 objectMapper.writeValueAsString(
                                         java.util.Optional.ofNullable(movementResult.getSegments())
@@ -69,6 +70,7 @@ public class CallbackService {
                     AnalysisCallbackDto.AnalysisResult gazeResult = dto.getVideo().getResults().get("gaze");
                     if (gazeResult != null) {
                         videoFeedback.setGazeEmotion(gazeResult.getEmotion());
+                        videoFeedback.setFocusLevel(gazeResult.getFocus_level());
                         videoFeedback.setGazeSegmentsJson(
                                 objectMapper.writeValueAsString(
                                         java.util.Optional.ofNullable(gazeResult.getSegments())
@@ -100,6 +102,7 @@ public class CallbackService {
                     AnalysisCallbackDto.AnalysisResult speedResult = dto.getAudio().getResults().get("speed");
                     if (speedResult != null) {
                         audioFeedback.setSpeedEmotion(speedResult.getEmotion());
+                        audioFeedback.setSpeedValue(speedResult.getValue());
                         audioFeedback.setSpeedSegmentsJson(
                                 objectMapper.writeValueAsString(
                                         java.util.Optional.ofNullable(speedResult.getSegments())
@@ -111,6 +114,7 @@ public class CallbackService {
                     AnalysisCallbackDto.AnalysisResult pitchResult = dto.getAudio().getResults().get("pitch");
                     if (pitchResult != null) {
                         audioFeedback.setPitchEmotion(pitchResult.getEmotion());
+                        audioFeedback.setPitchValue(pitchResult.getValue());
                         audioFeedback.setPitchSegmentsJson(
                                 objectMapper.writeValueAsString(
                                         java.util.Optional.ofNullable(pitchResult.getSegments())
@@ -122,6 +126,7 @@ public class CallbackService {
                     AnalysisCallbackDto.AnalysisResult volumeResult = dto.getAudio().getResults().get("volume");
                     if (volumeResult != null) {
                         audioFeedback.setVolumeEmotion(volumeResult.getEmotion());
+                        audioFeedback.setDecibels(volumeResult.getDecibels());
                         audioFeedback.setVolumeSegmentsJson(
                                 objectMapper.writeValueAsString(
                                         java.util.Optional.ofNullable(volumeResult.getSegments())
@@ -133,6 +138,13 @@ public class CallbackService {
                     AnalysisCallbackDto.AnalysisResult stutterResult = dto.getAudio().getResults().get("stutter");
                     if (stutterResult != null) {
                         audioFeedback.setStutterEmotion(stutterResult.getEmotion());
+                        audioFeedback.setStutterCount(stutterResult.getStutter_count());
+                        audioFeedback.setStutterDetailsJson(
+                                objectMapper.writeValueAsString(
+                                        java.util.Optional.ofNullable(stutterResult.getStutter_details())
+                                                .orElse(java.util.Collections.emptyList())
+                                )
+                        );
                         audioFeedback.setStutterSegmentsJson(
                                 objectMapper.writeValueAsString(
                                         java.util.Optional.ofNullable(stutterResult.getSegments())

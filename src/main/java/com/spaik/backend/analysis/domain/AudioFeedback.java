@@ -40,12 +40,26 @@ public class AudioFeedback {
     @Column(name = "stutter_emotion")
     private String stutterEmotion;
 
+    @Column(name = "speed_value")
+    private Double speedValue;
+    @Column(name = "pitch_value")
+    private Double pitchValue;
+    @Column(name = "decibels")
+    private Double decibels;
+    @Column(name = "stutter_count")
+    private Integer stutterCount;
+    @Column(name = "stutter_details", columnDefinition = "TEXT")
+    private String stutterDetailsJson;
+
+
+
     @Column(name = "speed_segments", columnDefinition = "TEXT")
     private String speedSegmentsJson;
     @Column(name = "pitch_segments", columnDefinition = "TEXT")
     private String pitchSegmentsJson;
     @Column(name = "volume_segments", columnDefinition = "TEXT")
     private String volumeSegmentsJson;
+
     @Column(name = "stutter_segments", columnDefinition = "TEXT")
     private String stutterSegmentsJson;
 
