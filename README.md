@@ -8,6 +8,7 @@ spAIk-project의 `spAIk_server` 폴더를 독립적으로 실행하는 가이드
 ## 사전 준비
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) 설치 및 실행
 - Windows 환경일 경우 WSL2 기반 Docker 권장
+- spAIk_server 폴더로 이동
 
 
 ## 실행 명령어 모음
