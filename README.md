@@ -1,3 +1,24 @@
+# =========================
+# Spring Boot 서버 실행 
+# =========================
+
+# 1️⃣ Git 클론
+git clone https://github.com/es1206/spAIk_server.git
+cd spAIk_server
+
+# 2️⃣ 설치 확인 (선택)
+git --version
+java -version
+./gradlew --version
+
+# 3️⃣ 빌드 (테스트 제외)
+./gradlew clean build -x test
+
+# 4️⃣ 개발 서버 실행
+./gradlew bootRun
+
+
+
 
 # 🚀 spAIk-server 실행 가이드 (Docker)
 
