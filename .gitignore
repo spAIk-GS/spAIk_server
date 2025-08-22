@@ -61,9 +61,4 @@ dist-ssr
 *.sln
 *.sw?
 
-#
-spAIk_client/
-spAIk_audio_ai/
-spAIk_video/
-venv/
-
+*.jar

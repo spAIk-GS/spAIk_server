@@ -1,11 +1,12 @@
-# JDK 17을 사용하는 슬림 이미지를 베이스로 사용
 FROM openjdk:17-jdk-slim
-
-# 작업 디렉터리 생성 및 이동
 WORKDIR /app
 
-# 빌드된 jar 파일을 컨테이너 내부로 복사
-COPY build/libs/*.jar app.jar
+# jar 복사
+COPY build/libs/spaik-backend-0.0.1-SNAPSHOT.jar app.jar
 
-# 앱 실행
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# wait-for-it.sh 복사
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+# DB 준비 후 앱 실행
+CMD ["./wait-for-it.sh", "spaik-db-backend:3306", "--", "java", "-jar", "app.jar"]
