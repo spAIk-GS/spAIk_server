@@ -19,13 +19,9 @@ git pull origin main  # main 브랜치 기준
 
 # 2️⃣ Docker 이미지 빌드
 # 현재 디렉토리의 Dockerfile을 기반으로 이미지를 생성
-# -t spaik-server : 이미지 이름 지정
 docker build -t spaik-server .
 
 # 3️⃣ Docker 컨테이너 실행
-# -d : 백그라운드 실행
-# -p 8080:8080 : 호스트 8080 포트를 컨테이너 8080 포트에 매핑
-# --name spaik-server : 컨테이너 이름 지정
 docker run -d -p 8080:8080 --name spaik-server spaik-server
 
 # 4️⃣ 서버 실행 확인
