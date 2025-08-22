@@ -10,30 +10,22 @@ spAIk-project의 `spAIk_server` 폴더를 독립적으로 실행하는 가이드
 - Windows 환경일 경우 WSL2 기반 Docker 권장
 
 
-## 실행 명령어 모음 (설명 포함, 1~6단계)
+## 실행 명령어 모음
 ```bash
-# 1️⃣ 레포지토리 최신화
-# 로컬 백엔드 레포지토리를 원격 최신 상태로 업데이트
-cd /path/to/spAIk_project/spAIk_server
-git pull origin main  # main 브랜치 기준
+# 1️⃣ GitHub에서 프로젝트 클론
+git clone https://github.com/spAIk-GS/spAIk_server.git
+cd spAIk_server
 
-# 2️⃣ Docker 이미지 빌드
-# 현재 디렉토리의 Dockerfile을 기반으로 이미지를 생성
-docker build -t spaik-server .
+# 2️⃣ Gradle 빌드 (테스트 제외)
+./gradlew clean build -x test
 
-# 3️⃣ Docker 컨테이너 실행
-docker run -d -p 8080:8080 --name spaik-server spaik-server
+# 3️⃣ Docker Compose로 DB + 백엔드 실행
+docker-compose -f docker-compose-backend.yml up -d
 
-# 4️⃣ 서버 실행 확인
-# 컨테이너 로그를 실시간으로 확인
-docker logs -f spaik-server
+# 4️⃣ 실행 로그 확인
+docker-compose -f docker-compose-backend.yml logs -f
 
-# 5️⃣ 브라우저에서 접속
-# 서버가 정상적으로 실행되면 브라우저에서 확인 가능
-# URL: http://localhost:8080
+# 5️⃣ 종료 시 (선택)
+# docker-compose -f docker-compose-backend.yml down
 
-# 6️⃣ 컨테이너 중지 및 삭제
-# 필요 시 컨테이너를 중지하고 삭제 가능
-docker stop spaik-server
-docker rm spaik-server
 
